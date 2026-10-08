@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OHM RX-5 Roaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0E1114; --panel:#15191E; --panel2:#1B2027; --line:#252C34; --line2:#34404B;
+  --text:#E8E4DA; --muted:#8D949D; --dim:#5E666F;
+  --brass:#CFA85A; --brass-d:#8C6F34; --brass-t:rgba(207,168,90,.12);
+  --bt:#F08A3E; --et:#E5505F; --ror:#58BEDC; --gas:#4F7FE0; --ref:#9AA2AB; --ac:#B58CF0; --voc:#7FD1A8;
+  --ok:#5FBF7F; --warn:#E6B347; --crit:#E5484D;
+  --dry:#9DB35E; --mai:#C98A45; --dev:#7A4A2B;
+  --f-disp:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:6px;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:14px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(14,17,20,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1480px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand b{font-family:var(--f-disp);font-weight:700;font-size:17px;letter-spacing:.04em}
+.brand small{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.1em}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav a{color:var(--muted);text-decoration:none;font-size:12.5px;padding:6px 10px;border-radius:5px;white-space:nowrap}
+.nav a:hover{color:var(--text);background:var(--panel2)}
+.bar-mid{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border:1px solid var(--line2);border-radius:99px;font-size:12.5px;font-weight:500;background:var(--panel)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.pill[data-s="ROASTING"] i{background:var(--bt);box-shadow:0 0 10px var(--bt)}
+.pill[data-s="PREHEAT"] i{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+.pill[data-s="READY"] i,.pill[data-s="DONE"] i{background:var(--ok)}
+.pill[data-s="COOLING"] i{background:var(--ror);box-shadow:0 0 10px var(--ror)}
+.pill[data-s="ESTOP"]{border-color:var(--crit);color:#ffb3b5}
+.pill[data-s="ESTOP"] i{background:var(--crit);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+.clock{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.estop{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:var(--r);padding:8px 14px;background:linear-gradient(#d63a3f,#a9252b);color:#fff;font-family:var(--f-disp);font-weight:700;letter-spacing:.08em;font-size:13px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.3),0 0 0 1px #5e1417}
+.estop:hover{filter:brightness(1.1)}
+.estop span{width:14px;height:14px;border-radius:50%;background:#ffdb4d;box-shadow:inset 0 0 0 3px #d63a3f}
+@media (max-width:1100px){.nav{order:3;width:100%}}
+
+.wrap{max-width:1480px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
+section[id],div[id].sh{scroll-margin-top:84px}
+
+/* grid + cards */
+.top{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:1060px){.top{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0}
+.card-h{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card-h h2{font-family:var(--f-disp);font-size:15px;font-weight:600;letter-spacing:.03em;margin:0}
+.card-h .sp{margin-left:auto}
+.sh{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:14px}
+.sh h2{font-family:var(--f-disp);font-weight:700;font-size:clamp(20px,2.2vw,26px);margin:2px 0 0;letter-spacing:.01em;text-wrap:balance}
+.sh p{margin:4px 0 0;color:var(--muted);max-width:68ch}
+
+/* viewport */
+.vp{position:relative;height:clamp(440px,68vh,740px);border-radius:10px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#232a31 0%,#12161a 55%,#0b0d10 100%);border:1px solid var(--line)}
+@media (max-width:640px){.vp{height:440px}}
+.vp canvas{display:block;width:100%;height:100%;touch-action:none}
+.vp-top{position:absolute;left:14px;right:14px;top:12px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;flex-wrap:wrap}
+.vp-title h1{font-family:var(--f-disp);font-weight:700;font-size:clamp(20px,2.4vw,28px);letter-spacing:.02em;margin:2px 0 0;line-height:1.1;text-wrap:balance}
+.vp-title p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+.tools{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;align-self:flex-start}
+.tbtn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border-radius:var(--r);border:1px solid var(--line2);background:rgba(21,25,30,.85);font-size:12.5px}
+.tbtn:hover{border-color:var(--brass-d)}
+.tbtn[aria-pressed="true"]{border-color:var(--brass);color:var(--brass);background:rgba(207,168,90,.10)}
+.tbtn svg{width:15px;height:15px}
+.chips{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 12px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;background:linear-gradient(transparent,rgba(9,11,13,.85) 40%)}
+.chip{flex:none;height:30px;padding:0 11px;border-radius:99px;border:1px solid var(--line2);background:rgba(21,25,30,.9);font-size:12px;white-space:nowrap}
+.chip:hover{border-color:var(--brass-d)}
+.chip.on{border-color:var(--brass);color:var(--bg);background:var(--brass);font-weight:600}
+.chip.new::after{content:"NEW";font-family:var(--f-mono);font-size:9px;margin-left:6px;color:var(--ac);letter-spacing:.08em}
+.chip.on.new::after{color:#3b2a6b}
+.tip{position:absolute;pointer-events:none;padding:4px 9px;background:var(--brass);color:#16120a;border-radius:4px;font-size:12px;font-weight:600;transform:translate(12px,-130%);white-space:nowrap}
+.info{position:absolute;left:14px;top:92px;width:min(330px,calc(100% - 28px));max-height:calc(100% - 150px);overflow:auto;background:rgba(17,21,25,.94);border:1px solid var(--line2);border-left:3px solid var(--brass);border-radius:8px;padding:14px 16px;backdrop-filter:blur(6px)}
+.info h3{font-family:var(--f-disp);font-size:17px;margin:2px 0 0;font-weight:600}
+.info .en{font-family:var(--f-mono);font-size:11px;color:var(--brass);letter-spacing:.08em}
+.info p{margin:8px 0 10px;color:#c9c5bc;font-size:13px}
+.info dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12.5px}
+.info dt{color:var(--muted)}
+.info dd{margin:0;font-family:var(--f-mono);font-size:12px}
+.info .live{margin-top:10px;padding:7px 10px;border-radius:5px;background:var(--brass-t);font-family:var(--f-mono);font-size:12px;color:var(--brass)}
+.info .x{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:5px;border:1px solid var(--line2);background:transparent;color:var(--muted);line-height:1}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);text-align:center;padding:24px}
+
+/* HMI */
+.hmi{display:flex;flex-direction:column}
+.hmi-sec{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.hmi-sec:last-child{border-bottom:0}
+.phase-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.timer{font-family:var(--f-mono);font-size:40px;font-weight:500;line-height:1;letter-spacing:-.02em}
+.phase-name{font-family:var(--f-disp);font-size:15px;font-weight:600;text-align:right}
+.phase-name small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.08em}
+.reads{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.rd{background:var(--panel2);padding:9px 12px;display:flex;flex-direction:column;gap:1px;position:relative}
+.rd .k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted)}
+.rd .v{font-family:var(--f-mono);font-size:27px;font-weight:500;line-height:1.15}
+.rd .v small{font-size:12px;color:var(--muted);margin-left:3px}
+.rd .s{font-size:11.5px;color:var(--muted);font-family:var(--f-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:2px;background:var(--c,var(--line2))}
+.pbar{display:flex;height:10px;border-radius:3px;overflow:hidden;background:var(--line);gap:1px}
+.pbar div{height:100%;transition:width .3s}
+.plegend{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted);gap:8px;flex-wrap:wrap}
+.plegend b{font-weight:500;color:var(--text)}
+.plegend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.ctl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fld label,.fld .lb{font-size:12px;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;background:var(--panel2)}
+.seg button{flex:1;border:0;background:transparent;min-height:32px;padding:0 6px;font-size:12.5px;color:var(--muted)}
+.seg.mono button{font-family:var(--f-mono);letter-spacing:.04em}
+.seg button+button{border-left:1px solid var(--line2)}
+.seg button[aria-pressed="true"]{background:var(--brass);color:#16120a;font-weight:700}
+select,input[type=number]{height:34px;border-radius:var(--r);border:1px solid var(--line2);background:var(--panel2);padding:0 8px;width:100%}
+input[type=number]{font-family:var(--f-mono)}
+.stepper{display:flex;align-items:center;border:1px solid var(--line2);border-radius:var(--r);background:var(--panel2);height:34px}
+.stepper button{width:34px;height:100%;border:0;background:transparent;font-size:16px;color:var(--muted)}
+.stepper span{flex:1;text-align:center;font-family:var(--f-mono)}
+.slider{display:grid;grid-template-columns:70px 1fr 58px;align-items:center;gap:10px}
+.slider label{font-size:12.5px;color:var(--muted)}
+.slider output{font-family:var(--f-mono);text-align:right;font-size:13px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--c,var(--brass)) var(--p,50%),var(--line2) var(--p,50%))}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--c,var(--brass)) var(--p,50%),var(--line2) var(--p,50%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:3px;background:#e9e5dc;margin-top:-5px;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line2)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:3px;background:#e9e5dc;border:2px solid var(--bg)}
+input[type=range]:disabled{opacity:.75}
+.auto-tag{font-family:var(--f-mono);font-size:10px;color:var(--gas);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-left:5px;letter-spacing:.06em}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.act{height:46px;border-radius:var(--r);border:1px solid var(--line2);background:var(--panel2);font-family:var(--f-disp);font-weight:600;font-size:13px;letter-spacing:.03em;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.act small{font-family:var(--f-mono);font-size:9.5px;color:var(--muted);font-weight:400;letter-spacing:.1em}
+.act:not(:disabled):hover{border-color:var(--brass)}
+.act.primary:not(:disabled){background:var(--brass);color:#16120a;border-color:var(--brass)}
+.act.primary:not(:disabled) small{color:#4a3a18}
+.act:disabled{opacity:.35;cursor:not-allowed}
+.act.wide{grid-column:span 2}
+.alarm{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:6px;font-size:12.5px;background:rgba(230,179,71,.1);color:var(--warn);border:1px solid rgba(230,179,71,.3)}
+.alarm.crit{background:rgba(229,72,77,.1);color:#ff9fa2;border-color:rgba(229,72,77,.35)}
+.alarm.info{background:rgba(95,191,127,.1);color:#9fe0b4;border-color:rgba(95,191,127,.35)}
+.alarm svg{flex:none}
+
+/* setup */
+.setup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr);gap:0}
+@media (max-width:1100px){.setup{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.setup .plan{grid-column:1/-1;border-left:0!important;border-top:1px solid var(--line)}}
+@media (max-width:680px){.setup{grid-template-columns:minmax(0,1fr)}.setup>div+div{border-left:0!important;border-top:1px solid var(--line)}}
+.setup>div{padding:16px;display:flex;flex-direction:column;gap:12px}
+.setup>div+div{border-left:1px solid var(--line)}
+.setup h3{font-family:var(--f-disp);font-size:14px;font-weight:600;margin:0;display:flex;align-items:center;gap:8px}
+.setup h3 .n{font-family:var(--f-mono);font-size:10.5px;color:var(--bg);background:var(--brass);border-radius:3px;padding:1px 5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11.5px;color:var(--dim);margin-top:-2px}
+.brew{display:flex;gap:6px;flex-wrap:wrap}
+.brew button{height:30px;padding:0 10px;border-radius:99px;border:1px solid var(--line2);background:var(--panel2);font-size:12px}
+.brew button[aria-pressed="true"]{border-color:var(--brass);color:var(--brass);background:var(--brass-t)}
+.agbar{height:12px;border-radius:3px;background:linear-gradient(90deg,#1c100a,#3b2314 18%,#5f3a20 38%,#8a5a32 58%,#b8864f 80%,#c8a878);position:relative}
+.agbar i{position:absolute;top:-4px;width:3px;height:20px;background:var(--text);border-radius:2px;transform:translateX(-50%);box-shadow:0 0 0 2px var(--bg)}
+.agscale{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
+.plan-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+@media (max-width:420px){.plan-tiles{grid-template-columns:1fr 1fr}}
+.pt{background:var(--panel2);padding:9px 11px}
+.pt .k{font-size:11px;color:var(--muted)}
+.pt .v{font-family:var(--f-mono);font-size:18px;font-weight:500}
+.pt .v small{font-size:11px;color:var(--muted);margin-left:2px}
+.pt .s{font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
+.why{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.why li{display:grid;grid-template-columns:16px 1fr;gap:8px;font-size:12.5px;color:#c9c5bc;line-height:1.45}
+.why li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c,var(--brass));margin:6px 0 0 4px}
+.planstate{font-size:12px;padding:7px 10px;border-radius:6px;background:var(--panel2);border:1px dashed var(--line2);color:var(--muted)}
+.planstate b{color:var(--brass);font-weight:500}
+
+/* chart */
+.legend{display:flex;gap:6px;flex-wrap:wrap}
+.lg{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:99px;border:1px solid var(--line2);background:transparent;font-family:var(--f-mono);font-size:11.5px}
+.lg i{width:14px;height:3px;border-radius:2px;background:var(--c)}
+.lg[aria-pressed="false"]{opacity:.4}
+.chart-wrap{position:relative;padding:8px 8px 4px}
+#chart{display:block;width:100%;height:360px}
+@media (max-width:640px){#chart{height:270px}}
+.ctip{position:absolute;pointer-events:none;background:rgba(14,17,20,.95);border:1px solid var(--line2);border-radius:6px;padding:8px 10px;font-family:var(--f-mono);font-size:11.5px;line-height:1.6;min-width:140px}
+
+/* FC detection */
+.fcgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:0}
+@media (max-width:900px){.fcgrid{grid-template-columns:minmax(0,1fr)}.fcgrid>div+div{border-left:0!important;border-top:1px solid var(--line)}}
+.fcgrid>div{padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fcgrid>div+div{border-left:1px solid var(--line)}
+.scope{position:relative;border:1px solid var(--line);border-radius:8px;background:#0b0e11;overflow:hidden}
+#scope{display:block;width:100%;height:150px}
+.scope-h{position:absolute;left:10px;top:8px;right:10px;display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);pointer-events:none}
+.acstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.acstats div{background:var(--panel2);padding:8px 11px}
+.acstats span{display:block;font-size:11px;color:var(--muted)}
+.acstats b{font-family:var(--f-mono);font-weight:500;font-size:18px}
+.chans{display:flex;flex-direction:column;gap:9px}
+.ch{display:grid;grid-template-columns:auto 1fr 44px;gap:6px 10px;align-items:center}
+.ch .nm{font-size:13px}
+.ch .nm small{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
+.ch .w{font-family:var(--f-mono);font-size:12px;text-align:right}
+.meter{grid-column:1/-1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--c);transition:width .25s}
+.ch.off .meter i{background:var(--dim)}
+.ch.off .nm{color:var(--dim)}
+.sw{position:relative;width:36px;height:20px;border-radius:99px;border:1px solid var(--line2);background:var(--panel2);padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.sw[aria-checked="true"]{background:rgba(207,168,90,.2);border-color:var(--brass)}
+.sw[aria-checked="true"]::after{transform:translateX(16px);background:var(--brass)}
+.sw:disabled{opacity:.5;cursor:not-allowed}
+.chrow{display:flex;align-items:center;gap:10px}
+.conf{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+.conf svg{width:92px;height:92px}
+.conf .t{font-family:var(--f-disp);font-weight:600;font-size:15px}
+.conf .d{font-size:12.5px;color:var(--muted)}
+.lotvar{display:flex;flex-direction:column;gap:8px}
+.lv{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;font-size:12px}
+.lv .tr{position:relative;height:18px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--line) 50%,transparent)}
+.lv .tr i{position:absolute;top:4px;width:10px;height:10px;border-radius:50%;transform:translateX(-50%)}
+.lv .tr i.m{border:2px solid var(--ref);background:var(--panel)}
+.lv .tr i.a{background:var(--mai)}
+.lvscale{display:grid;grid-template-columns:110px 1fr;gap:10px;font-family:var(--f-mono);font-size:10px;color:var(--dim)}
+.lvscale div{display:flex;justify-content:space-between}
+
+/* flow */
+.flow{display:flex;gap:0;overflow-x:auto;padding:16px}
+.fs{flex:1 0 150px;position:relative;padding:12px 12px 12px 14px;border:1px solid var(--line2);background:var(--panel2);border-radius:8px;display:flex;flex-direction:column;gap:4px}
+.fs+.fs{margin-left:18px}
+.fs+.fs::before{content:"";position:absolute;left:-18px;top:50%;width:18px;height:1.5px;background:var(--line2)}
+.fs .c{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;color:var(--dim)}
+.fs b{font-family:var(--f-disp);font-weight:600;font-size:14px}
+.fs span{font-size:12px;color:var(--muted);line-height:1.45}
+.fs.done{border-color:var(--brass-d)}
+.fs.done .c{color:var(--brass)}
+.fs.now{border-color:var(--brass);background:#1f1a10;box-shadow:0 0 0 3px rgba(207,168,90,.12)}
+.fs.now .c{color:var(--brass)}
+.fs.now .c::after{content:" ● LIVE";color:var(--bt)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.stats{grid-template-columns:minmax(0,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+@media (max-width:640px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.kpi .v{font-family:var(--f-mono);font-size:24px;font-weight:500}
+.kpi .v small{font-size:12px;color:var(--muted);margin-left:2px}
+.kpi .s{font-size:11.5px;color:var(--muted)}
+.swatch{display:flex;align-items:center;gap:10px}
+.swatch i{width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);flex:none;box-shadow:inset -3px -3px 6px rgba(0,0,0,.35)}
+.evts{list-style:none;margin:0;padding:6px 0;max-height:300px;overflow:auto}
+.evts li{display:grid;grid-template-columns:54px 12px 1fr auto;gap:8px;align-items:center;padding:6px 16px;font-size:13px}
+.evts li+li{border-top:1px dashed var(--line)}
+.evts .t{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.evts .d{width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
+.evts .val{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.btn-sm{height:30px;padding:0 11px;border-radius:var(--r);border:1px solid var(--line2);background:var(--panel2);font-size:12.5px}
+.btn-sm:hover{border-color:var(--brass)}
+.csv{width:100%;height:90px;margin-top:8px;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;font-family:var(--f-mono);font-size:11px;color:var(--muted);padding:8px}
+.tbl{overflow-x:auto}
+table.hist{width:100%;border-collapse:collapse;font-size:12.5px;min-width:760px}
+table.hist th{text-align:left;font-weight:400;color:var(--muted);font-size:11.5px;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.hist td{padding:9px 12px;font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+table.hist tr+tr td{border-top:1px solid var(--line)}
+table.hist td.l{font-family:var(--f-body);font-size:12.5px}
+.ex{font-family:var(--f-mono);font-size:9.5px;color:var(--dim);border:1px solid var(--line2);border-radius:3px;padding:0 4px;margin-left:6px}
+.dg{color:var(--ok)}.dw{color:var(--warn)}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1060px){.tiers{grid-template-columns:minmax(0,1fr)}}
+.tier{display:flex;flex-direction:column}
+.tier-h{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.tier-h .lvl{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;color:var(--c)}
+.tier-h b{font-family:var(--f-disp);font-size:17px;font-weight:600}
+.tier-h span{font-size:12.5px;color:var(--muted)}
+.eq{padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.eq+.eq{border-top:1px solid var(--line)}
+.eq .nm{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.eq .nm b{font-weight:600;font-size:14px}
+.eq .nm code{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);white-space:nowrap}
+.eq p{margin:0;font-size:12.5px;color:#c3bfb6}
+.eq dl{margin:2px 0 0;display:grid;grid-template-columns:78px 1fr;gap:3px 10px;font-size:12px}
+.eq dt{color:var(--dim)}
+.eq dd{margin:0;color:var(--muted)}
+.eq .gain{font-size:12px;color:var(--c);font-family:var(--f-mono)}
+.inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;background:var(--line)}
+.inp{background:var(--panel);padding:13px 16px;display:flex;flex-direction:column;gap:3px}
+.inp b{font-size:13.5px;font-weight:600}
+.inp span{font-size:12px;color:var(--muted)}
+.inp .req{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--brass)}
+.inp .opt{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--dim)}
+
+/* components */
+.comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.comp{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.comp .top-row{display:flex;justify-content:space-between;align-items:start;gap:8px}
+.comp h3{font-family:var(--f-disp);font-weight:600;font-size:16px;margin:0;line-height:1.3}
+.comp .en{font-family:var(--f-mono);font-size:11px;color:var(--brass);letter-spacing:.06em}
+.tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;padding:2px 6px;border-radius:3px;border:1px solid var(--line2);color:var(--muted);flex:none}
+.tag.ctl{color:var(--ror);border-color:rgba(88,190,220,.35)}
+.tag.heat{color:var(--bt);border-color:rgba(240,138,62,.35)}
+.tag.mech{color:var(--brass);border-color:rgba(207,168,90,.35)}
+.tag.sens{color:var(--ac);border-color:rgba(181,140,240,.4)}
+.comp p{margin:0;color:#c3bfb6;font-size:13px}
+.comp dl{margin:2px 0 0;display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12.5px;border-top:1px solid var(--line);padding-top:8px}
+.comp dt{color:var(--muted)}
+.comp dd{margin:0;font-family:var(--f-mono);font-size:12px;text-align:right}
+.comp .go{margin-top:auto;align-self:flex-start}
+
+/* architecture */
+.arch{overflow-x:auto;padding:10px}
+.arch svg{display:block;min-width:880px;width:100%;height:auto}
+.arch .bx{fill:var(--panel2);stroke:var(--line2)}
+.arch .bx.core{fill:#1f1a10;stroke:var(--brass)}
+.arch .bx.nw{stroke:var(--ac)}
+.arch .t1{fill:var(--text);font-family:var(--f-body);font-size:12.5px;font-weight:500}
+.arch .t2{fill:var(--muted);font-family:var(--f-mono);font-size:10px}
+.arch .t3{fill:var(--brass);font-family:var(--f-mono);font-size:10px;letter-spacing:.08em}
+.arch .t4{fill:var(--ac);font-family:var(--f-mono);font-size:9px;letter-spacing:.08em}
+.arch .ln{stroke:var(--line2);stroke-width:1.5;fill:none}
+.arch .ln.sig{stroke:var(--ror)}
+.arch .ln.nw{stroke:var(--ac)}
+.arch .ln.out{stroke:var(--bt)}
+.arch .ln.bus{stroke:var(--brass);stroke-dasharray:5 4}
+.arch .flowa{stroke-dasharray:4 6;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-20}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+table.spec{width:100%;border-collapse:collapse;font-size:13px}
+table.spec th{text-align:left;font-weight:400;color:var(--muted);padding:8px 16px;width:44%;vertical-align:top}
+table.spec td{padding:8px 16px;font-family:var(--f-mono);font-size:12.5px}
+table.spec tr+tr th,table.spec tr+tr td{border-top:1px solid var(--line)}
+table.spec tr.grp th{color:var(--brass);font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding-top:14px}
+.ilk{list-style:none;margin:0;padding:6px 0}
+.ilk li{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:10px 16px}
+.ilk li+li{border-top:1px solid var(--line)}
+.ilk .code{font-family:var(--f-mono);font-size:11px;color:var(--brass);border:1px solid var(--brass-d);border-radius:3px;padding:1px 5px;height:fit-content}
+.ilk b{font-weight:600;font-size:13.5px}
+.ilk span{grid-column:2;color:var(--muted);font-size:12.5px}
+.train{display:flex;align-items:center;overflow-x:auto;padding:14px 16px}
+.train div{flex:none;padding:7px 10px;border:1px solid var(--line2);border-radius:5px;background:var(--panel2);font-size:12px;text-align:center;line-height:1.3}
+.train div small{display:block;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.train i{flex:none;width:22px;height:1.5px;background:var(--gas);position:relative}
+.train i::after{content:"";position:absolute;right:-1px;top:-3px;border-left:6px solid var(--gas);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent}
+footer{color:var(--dim);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px;margin-top:8px}
+@media (prefers-reduced-motion:reduce){.arch .flowa{animation:none}.pill i{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="6" fill="none" stroke="#CFA85A" stroke-width="1.5"/><circle cx="17" cy="17" r="8.5" fill="none" stroke="#CFA85A" stroke-width="1.5"/><path d="M13 21.5 17 12.5 21 21.5M14.6 18h4.8" fill="none" stroke="#E8E4DA" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div><b>RX-5 DRUM ROASTER</b><small>OHM ENGINEERING · CONTROL &amp; SCADA</small></div>
+    </div>
+    <nav class="nav" aria-label="ส่วนต่างๆ">
+      <a href="#setup">ตั้งค่าแบทช์</a><a href="#fc">ตรวจจับจุดแตก</a><a href="#logic">ลำดับการตัดสินใจ</a><a href="#sensors">เซนเซอร์ที่ต้องเพิ่ม</a><a href="#components">อุปกรณ์</a><a href="#specs">สเปก</a>
+    </nav>
+    <div class="bar-mid">
+      <span class="pill" id="statePill" data-s="OFF"><i></i><span id="stateTxt">ปิดเครื่อง</span></span>
+      <span class="clock" id="clock">SIM ×5</span>
+      <button class="estop" id="estop" aria-label="หยุดฉุกเฉิน"><span></span>E-STOP</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="top">
+    <div class="vp" id="vp">
+      <canvas id="gl" aria-label="โมเดล 3 มิติเครื่องคั่วกาแฟ หมุนและคลิกชิ้นส่วนได้"></canvas>
+      <div class="vp-top">
+        <div class="vp-title">
+          <div class="eyebrow">Digital twin · Multi-sensor roasting</div>
+          <h1>เครื่องคั่วกาแฟอัตโนมัติ RX-5</h1>
+          <p>ลากเพื่อหมุน · ซูมด้วยล้อเมาส์ · คลิกชิ้นส่วนเพื่อดูรายละเอียด</p>
+        </div>
+        <div class="tools">
+          <button class="tbtn" id="tRotate" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg>หมุนอัตโนมัติ</button>
+          <button class="tbtn" id="tCut" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M2 14 14 2" stroke-dasharray="2 2"/></svg>มุมมองตัด</button>
+          <button class="tbtn" id="tExplode" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="5" height="5"/><path d="M2 2l2.5 2.5M14 2l-2.5 2.5M2 14l2.5-2.5M14 14l-2.5-2.5"/></svg>แยกชิ้นส่วน</button>
+          <button class="tbtn" id="tHome"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7.5 8 3l5.5 4.5V13h-11z"/></svg>มุมมองเริ่มต้น</button>
+        </div>
+      </div>
+      <div class="info" id="info" hidden></div>
+      <div class="tip" id="tip" hidden></div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <aside class="card hmi" aria-label="แผงควบคุม HMI">
+      <div class="hmi-sec">
+        <div class="phase-row">
+          <div><div class="eyebrow">Roast time</div><div class="timer" id="rTime">00:00</div></div>
+          <div class="phase-name" id="rPhase">—<small>PHASE</small></div>
+        </div>
+        <div class="reads">
+          <div class="rd" style="--c:var(--bt)"><div class="k">BT · อุณหภูมิเมล็ด</div><div class="v" id="rBT">—</div><div class="s" id="rBTs">—</div></div>
+          <div class="rd" style="--c:var(--et)"><div class="k">ET · ลมร้อน</div><div class="v" id="rET">—</div><div class="s" id="rETs">—</div></div>
+          <div class="rd" style="--c:var(--ror)"><div class="k">RoR · อัตราเพิ่ม</div><div class="v" id="rROR">—</div><div class="s">เฉลี่ย 30 วินาที</div></div>
+          <div class="rd" style="--c:var(--ac)"><div class="k">FC · ความมั่นใจจุดแตก</div><div class="v" id="rConf">—</div><div class="s" id="rConfS">—</div></div>
+          <div class="rd" style="--c:var(--brass)"><div class="k">DTR · ช่วงพัฒนา</div><div class="v" id="rDTR">—</div><div class="s" id="rDTRs">—</div></div>
+          <div class="rd" style="--c:#b8864f"><div class="k">สีเมล็ด · NIR Agtron</div><div class="v" id="rAg">—</div><div class="s" id="rAgS">—</div></div>
+        </div>
+        <div class="pbar" aria-hidden="true"><div id="pbDry" style="background:var(--dry);width:0"></div><div id="pbMai" style="background:var(--mai);width:0"></div><div id="pbDev" style="background:var(--dev);width:0"></div></div>
+        <div class="plegend"><span><i style="background:var(--dry)"></i>อบแห้ง <b id="lgDry">0:00</b></span><span><i style="background:var(--mai)"></i>เมลลาร์ด <b id="lgMai">0:00</b></span><span><i style="background:var(--dev)"></i>พัฒนา <b id="lgDev">0:00</b></span></div>
+      </div>
+      <div class="hmi-sec">
+        <div class="ctl-grid">
+          <div class="fld"><span class="lb">โหมดควบคุม</span><div class="seg mono" role="group" aria-label="โหมด"><button id="mAuto" aria-pressed="true">AUTO</button><button id="mMan" aria-pressed="false">MANUAL</button></div></div>
+          <div class="fld"><span class="lb">ความเร็วจำลอง</span><div class="seg mono" id="speedSeg" role="group" aria-label="ความเร็ว"><button data-sp="1" aria-pressed="false">1×</button><button data-sp="5" aria-pressed="true">5×</button><button data-sp="15" aria-pressed="false">15×</button></div></div>
+        </div>
+        <div class="slider"><label for="gasR">แก๊ส<span class="auto-tag" id="gasTag">PID</span></label><input type="range" id="gasR" min="0" max="100" value="0" style="--c:var(--gas)"><output id="gasO" class="mono">0 %</output></div>
+        <div class="slider"><label for="airR">ลมดูด<span class="auto-tag" id="airTag">AUTO</span></label><input type="range" id="airR" min="0" max="100" value="35" style="--c:var(--ror)"><output id="airO" class="mono">35 %</output></div>
+        <div class="slider"><label for="rpmR">ถังหมุน</label><input type="range" id="rpmR" min="40" max="75" value="58" style="--c:var(--brass)"><output id="rpmO" class="mono">58 rpm</output></div>
+      </div>
+      <div class="hmi-sec">
+        <div class="acts">
+          <button class="act" id="aPre">อุ่นเครื่อง<small>PREHEAT</small></button>
+          <button class="act" id="aChg">ใส่เมล็ด<small>CHARGE</small></button>
+          <button class="act" id="aFC">มาร์คจุดแตก<small>MARK FC</small></button>
+          <button class="act wide" id="aDrop">ปล่อยเมล็ด<small>DROP</small></button>
+          <button class="act" id="aNew">แบทช์ใหม่<small>NEW BATCH</small></button>
+        </div>
+        <div id="alarms" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ============ BATCH SETUP ============ -->
+  <section class="card" id="setup">
+    <div class="card-h"><h2>ตั้งค่าแบทช์</h2><span class="eyebrow">Batch setup · Green bean → Target → Plan</span><span class="sp planstate" id="planState"></span></div>
+    <div class="setup">
+      <div>
+        <h3><span class="n">1</span>ข้อมูลเมล็ดดิบ</h3>
+        <div class="fld"><label for="lotSel">ล็อตเมล็ด</label><select id="lotSel"></select></div>
+        <div class="row2">
+          <div class="fld"><label for="inM">ความชื้น (%)</label><input type="number" id="inM" min="8" max="14" step="0.1"></div>
+          <div class="fld"><label for="inD">ความหนาแน่น (g/L)</label><input type="number" id="inD" min="600" max="850" step="5"></div>
+        </div>
+        <div class="hint">วัดด้วยเครื่องวัดความชื้นเมล็ดและถ้วยวัดความหนาแน่นแบบไหลอิสระก่อนคั่วทุกล็อต</div>
+        <div class="row2">
+          <div class="fld"><label for="inP">กระบวนการแปรรูป</label><select id="inP"><option value="washed">Washed</option><option value="honey">Honey</option><option value="natural">Natural</option></select></div>
+          <div class="fld"><label for="inS">ขนาดเมล็ด (Screen)</label><select id="inS"><option>14/15</option><option>15/16</option><option>16</option><option>17</option><option>17/18</option><option>18+</option></select></div>
+        </div>
+        <div class="fld"><span class="lb">น้ำหนักต่อแบทช์ (โหลดเซลล์)</span><div class="stepper"><button id="bMinus" aria-label="ลดน้ำหนัก">−</button><span id="bVal">5.0 kg</span><button id="bPlus" aria-label="เพิ่มน้ำหนัก">+</button></div></div>
+      </div>
+      <div>
+        <h3><span class="n">2</span>เป้าหมายการคั่ว</h3>
+        <div class="fld"><span class="lb">วิธีชง</span><div class="brew" id="brew"></div></div>
+        <div class="fld"><span class="lb">ระดับการคั่ว</span><div class="seg" id="lvSeg" role="group" aria-label="ระดับการคั่ว"></div></div>
+        <div class="fld">
+          <label for="agR" style="display:flex;justify-content:space-between"><span>สีเป้าหมาย (Agtron Gourmet)</span><b class="mono" id="agO" style="color:var(--text);font-weight:500">63</b></label>
+          <input type="range" id="agR" min="35" max="85" value="63" style="--c:#8a5a32">
+          <div class="agbar"><i id="agMark"></i></div>
+          <div class="agscale"><span>35 เข้ม</span><span>50</span><span>65</span><span>85 อ่อน</span></div>
+        </div>
+        <div class="fld"><label for="endSel">เงื่อนไขปล่อยเมล็ด</label>
+          <select id="endSel">
+            <option value="fused">รวมเซนเซอร์: สี NIR + DTR (แนะนำ)</option>
+            <option value="color">สีเมล็ดจาก NIR อย่างเดียว</option>
+            <option value="dtr">DTR หลังจุดแตก อย่างเดียว</option>
+            <option value="temp">อุณหภูมิ BT อย่างเดียว</option>
+          </select></div>
+      </div>
+      <div class="plan">
+        <h3><span class="n">3</span>แผนการคั่วที่ระบบคำนวณ</h3>
+        <div class="plan-tiles">
+          <div class="pt"><div class="k">จุดแตกคาดการณ์</div><div class="v" id="pFC">—</div><div class="s" id="pFCs">—</div></div>
+          <div class="pt"><div class="k">อุณหภูมิใส่เมล็ด</div><div class="v" id="pCh">—</div><div class="s">ET ก่อน Charge</div></div>
+          <div class="pt"><div class="k">อุณหภูมิปล่อย</div><div class="v" id="pDrop">—</div><div class="s">ค่าประมาณ</div></div>
+          <div class="pt"><div class="k">เวลารวม</div><div class="v" id="pTime">—</div><div class="s" id="pTimeS">—</div></div>
+          <div class="pt"><div class="k">DTR เป้าหมาย</div><div class="v" id="pDtr">—</div><div class="s">ช่วงพัฒนา</div></div>
+          <div class="pt"><div class="k">เพดานอุณหภูมิ</div><div class="v" id="pCap">—</div><div class="s">ปล่อยทันทีถ้าถึง</div></div>
+        </div>
+        <ul class="why" id="why"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h">
+      <h2>กราฟโปรไฟล์การคั่ว</h2>
+      <span class="eyebrow" id="profName">—</span>
+      <div class="legend sp" id="legend">
+        <button class="lg" data-k="bt" aria-pressed="true" style="--c:var(--bt)"><i></i>BT</button>
+        <button class="lg" data-k="et" aria-pressed="true" style="--c:var(--et)"><i></i>ET</button>
+        <button class="lg" data-k="ror" aria-pressed="true" style="--c:var(--ror)"><i></i>RoR</button>
+        <button class="lg" data-k="ref" aria-pressed="true" style="--c:var(--ref)"><i></i>เป้าหมาย</button>
+        <button class="lg" data-k="gas" aria-pressed="true" style="--c:var(--gas)"><i></i>แก๊ส</button>
+        <button class="lg" data-k="pop" aria-pressed="true" style="--c:var(--ac)"><i></i>เสียงแตก</button>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chart"></canvas><div class="ctip" id="ctip" hidden></div></div>
+  </section>
+
+  <!-- ============ FC DETECTION ============ -->
+  <section class="card" id="fc">
+    <div class="card-h"><h2>ระบบตรวจจับจุดแตกครั้งแรก</h2><span class="eyebrow">First crack · sensor fusion</span><span class="sp" style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12px">เสียงแตก</span><button class="sw" id="sndSw" role="switch" aria-checked="false" aria-label="เปิดเสียงแตก"></button></span></div>
+    <div class="fcgrid">
+      <div>
+        <div class="scope"><canvas id="scope"></canvas><div class="scope-h"><span>ACOUSTIC · 2–10 kHz band-pass · onset detector</span><span id="scopeSt">—</span></div></div>
+        <div class="acstats">
+          <div><span>เสียงแตกใน 15 วินาที</span><b id="acWin">0</b></div>
+          <div><span>นับรวมทั้งแบทช์</span><b id="acTot">0</b></div>
+          <div><span>อัตรา (ครั้ง/นาที)</span><b id="acRate">0</b></div>
+        </div>
+        <div class="lotvar">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap"><b style="font-family:var(--f-disp);font-weight:600">ทำไมใช้อุณหภูมิอย่างเดียวไม่พอ</b><span class="muted" style="font-size:12px">○ โมเดลจากความชื้น/ความหนาแน่น · ● จุดแตกที่วัดได้จริง</span></div>
+          <div id="lotVar"></div>
+          <div class="lvscale"><span></span><div><span>190 °C</span><span>196</span><span>202 °C</span></div></div>
+          <div class="hint" style="margin:0">แต่ละล็อตแตกที่อุณหภูมิต่างกันได้ถึง 6–8 °C ตามความชื้น ความหนาแน่น กระบวนการ และตำแหน่งหัววัด ถ้าตั้งจุดแตกตายตัวที่ 196 °C ระดับคั่วจะคลาดไปทั้งล็อต</div>
+        </div>
+      </div>
+      <div>
+        <div class="conf">
+          <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--line)" stroke-width="9"/><circle id="confArc" cx="50" cy="50" r="42" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 264" transform="rotate(-90 50 50)"/><line x1="50" y1="3" x2="50" y2="14" stroke="var(--text)" stroke-width="2" transform="rotate(259 50 50)"/><text id="confTxt" x="50" y="56" text-anchor="middle" style="fill:var(--text);font-family:var(--f-mono);font-size:20px">0%</text></svg>
+          <div><div class="t" id="confT">รอเข้าช่วงเมลลาร์ด</div><div class="d" id="confD">ระบบจะเริ่มฟังเสียงแตกเมื่อ BT เข้าใกล้จุดแตกคาดการณ์ ประกาศจุดแตกเมื่อความมั่นใจรวมถึง 72% และได้ยินเสียงแตกอย่างน้อย 3 ครั้งใน 15 วินาที</div></div>
+        </div>
+        <div class="chans" id="chans"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOGIC ============ -->
+  <div class="sh" id="logic"><div><div class="eyebrow">Decision sequence</div><h2>ลำดับการตัดสินใจอัตโนมัติ</h2><p>ขั้นที่กำลังทำงานจะเน้นสีแบบสด ระบบไม่ได้ปล่อยเมล็ดตามเวลาหรืออุณหภูมิที่ตั้งไว้ตายตัว แต่ยืนยันจากเซนเซอร์หลายตัวก่อนเปลี่ยนขั้น</p></div></div>
+  <div class="card"><div class="flow" id="flow"></div></div>
+
+  <section class="stats">
+    <div class="card">
+      <div class="card-h"><h2>ผลแบทช์</h2><span class="eyebrow" id="kpiNote">—</span></div>
+      <div class="kpis">
+        <div class="kpi"><span class="eyebrow">Drop</span><span class="v" id="kDrop">—</span><span class="s" id="kDropS">อุณหภูมิ · เวลา</span></div>
+        <div class="kpi"><span class="eyebrow">Weight loss</span><span class="v" id="kLoss">—</span><span class="s" id="kLossS">จากโหลดเซลล์</span></div>
+        <div class="kpi"><span class="eyebrow">Agtron</span><span class="v swatch"><i id="kSw"></i><span id="kAg">—</span></span><span class="s" id="kAgS">ระดับสี</span></div>
+        <div class="kpi"><span class="eyebrow">Output</span><span class="v" id="kOut">—</span><span class="s">เมล็ดคั่วที่ได้</span></div>
+      </div>
+      <div style="padding:14px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line)">
+        <span class="muted" style="font-size:12.5px">บันทึกทุก 1 วินาที ใช้กับ Artisan หรือ Excel ได้</span>
+        <button class="btn-sm" id="copyCsv" style="margin-left:auto">คัดลอก CSV</button>
+      </div>
+      <textarea class="csv" id="csvBox" readonly hidden aria-label="ข้อมูล CSV"></textarea>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>บันทึกเหตุการณ์</h2><span class="eyebrow sp">Event log</span></div>
+      <ul class="evts" id="evts"></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>ประวัติแบทช์และการเรียนรู้</h2><span class="eyebrow">ระบบใช้จุดแตกที่วัดได้จริงปรับการคาดการณ์ของล็อตเดียวกันในแบทช์ถัดไป</span></div>
+    <div class="tbl"><table class="hist"><thead><tr><th>แบทช์</th><th>ล็อต</th><th>ระดับ</th><th>FC คาดการณ์</th><th>FC ตรวจพบ</th><th>ปล่อย</th><th>เวลา</th><th>DTR</th><th>Agtron เป้า → ได้</th><th>ตรวจจับโดย</th></tr></thead><tbody id="hist"></tbody></table></div>
+  </section>
+
+  <!-- ============ SENSORS ============ -->
+  <div class="sh" id="sensors"><div><div class="eyebrow">Sensors &amp; equipment</div><h2>เซนเซอร์และอุปกรณ์ที่ควรเพิ่ม</h2><p>ให้ผู้ใช้เลือกแค่คั่วอ่อน กลาง หรือเข้มไม่พอ เพราะเมล็ดแต่ละล็อตตอบสนองต่อความร้อนต่างกัน ระบบต้องรู้ข้อมูลเมล็ดก่อนคั่ว และต้องวัดสิ่งที่เกิดกับเมล็ดจริงระหว่างคั่ว ไม่ใช่แค่อุณหภูมิ</p></div></div>
+  <div class="tiers" id="tiers"></div>
+  <div class="card">
+    <div class="card-h"><h2>ข้อมูลที่ผู้ใช้ต้องป้อนก่อนคั่ว</h2><span class="eyebrow sp">Operator inputs</span></div>
+    <div class="inputs" id="inputs"></div>
+  </div>
+
+  <div class="sh" id="components"><div><div class="eyebrow">Components</div><h2>อุปกรณ์หลักของระบบ</h2><p>ทุกชิ้นส่วนเชื่อมกับโมเดล 3 มิติด้านบน รายการที่มีป้าย NEW คือเซนเซอร์ที่เพิ่มเข้ามาเพื่อตรวจจับจุดแตกและควบคุมสี</p></div></div>
+  <div class="comps" id="comps"></div>
+
+  <div class="sh"><div><div class="eyebrow">Control architecture</div><h2>สถาปัตยกรรมระบบควบคุม</h2><p>สัญญาณเสียงประมวลผลที่ edge node (ESP32-S3 หรือ Raspberry Pi) แล้วส่งผลการตรวจจับเข้า PLC ผ่าน Modbus เพื่อไม่ให้ PLC ต้องประมวลผลเสียง 48 kHz เอง</p></div></div>
+  <div class="card arch">
+    <svg viewBox="0 0 960 430" role="img" aria-label="แผนภาพสถาปัตยกรรม เซนเซอร์เข้า PLC และอุปกรณ์ขับเคลื่อน">
+      <text class="t3" x="20" y="22">INPUTS · SENSORS</text>
+      <text class="t3" x="720" y="22">OUTPUTS · ACTUATORS</text>
+      <g id="archIn"></g><g id="archOut"></g>
+      <rect class="bx core" x="355" y="140" width="250" height="160" rx="8"/>
+      <text class="t3" x="375" y="166">CONTROLLER</text>
+      <text class="t1" x="375" y="190" style="font-size:16px;font-family:var(--f-disp);font-weight:700">PLC · RX-CTRL</text>
+      <text class="t2" x="375" y="212">PID แก๊ส · Sequence · Interlock</text>
+      <text class="t2" x="375" y="229">FC fusion · End-point logic</text>
+      <text class="t2" x="375" y="246">AI ×6 · DI ×8 · AO ×3 · DO ×8</text>
+      <text class="t2" x="375" y="263">RS-485 ×2 · Ethernet ×2</text>
+      <text class="t2" x="375" y="280">Safety relay SIL2 (E-stop, flame)</text>
+      <rect class="bx" x="380" y="40" width="200" height="54" rx="6"/>
+      <text class="t1" x="396" y="63">HMI 10" Touch</text><text class="t2" x="396" y="81">แผนคั่ว · กราฟ · ข้อมูลเมล็ด</text>
+      <path class="ln bus flowa" d="M480 94 V140"/><text class="t2" x="488" y="122">Modbus TCP</text>
+      <rect class="bx" x="380" y="350" width="200" height="54" rx="6"/>
+      <text class="t1" x="396" y="373">Data logger · Cloud</text><text class="t2" x="396" y="391">CSV / Artisan · ML retrain</text>
+      <path class="ln bus flowa" d="M480 300 V350"/>
+    </svg>
+  </div>
+
+  <div class="two" id="specs">
+    <div class="card">
+      <div class="card-h"><h2>ข้อมูลจำเพาะทางเทคนิค</h2><span class="eyebrow sp">Specification</span></div>
+      <table class="spec"><tbody id="specBody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>ระบบความปลอดภัย</h2><span class="eyebrow sp">Interlocks</span></div>
+      <div class="train" aria-label="ลำดับชุดท่อแก๊ส">
+        <div>วาล์วมือ<small>MV-01</small></div><i></i><div>เร็กกูเลเตอร์<small>PR 30 mbar</small></div><i></i><div>โซลินอยด์คู่<small>SSOV ×2</small></div><i></i><div>วาล์วปรับ<small>MOD 0–10 V</small></div><i></i><div>หัวเผา<small>18 kW</small></div>
+      </div>
+      <ul class="ilk" id="ilk"></ul>
+    </div>
+  </div>
+
+  <footer><span>RX-5 Drum Roaster · แบบจำลองแนวคิดโดย OHM Engineering · ค่าในหน้านี้มาจากโมเดลความร้อนจำลอง ไม่ใช่ข้อมูลจากเครื่องจริง</span><span class="mono">REV B · 2026-09</span></footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=s=>{s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const fmtS=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const sgn=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ================= DATA ================= */
+const LOTS={
+  eth:{name:'Ethiopia Yirgacheffe G1',short:'Ethiopia',proc:'washed',m:10.8,d:765,screen:'14/15',bias:1.4},
+  col:{name:'Colombia Huila Excelso',short:'Colombia',proc:'washed',m:11.0,d:740,screen:'17',bias:0.5},
+  bra:{name:'Brazil Cerrado',short:'Brazil',proc:'natural',m:11.3,d:690,screen:'17/18',bias:-0.9},
+  tha:{name:'Thailand Doi Chang',short:'Doi Chang',proc:'honey',m:11.8,d:725,screen:'16',bias:-1.6}
+};
+const LEVELS=[{id:'light',th:'อ่อน',ag:78},{id:'med',th:'กลาง',ag:63},{id:'mdark',th:'กลางเข้ม',ag:52},{id:'dark',th:'เข้ม',ag:43}];
+const LEVEL_TH={light:'คั่วอ่อน',med:'คั่วกลาง',mdark:'คั่วกลางเข้ม',dark:'คั่วเข้ม'};
+const BREW=[{id:'filter',th:'ดริป / ฟิลเตอร์',lv:'light'},{id:'omni',th:'ใช้ได้ทุกแบบ',lv:'med'},{id:'espresso',th:'เอสเปรสโซ',lv:'mdark'},{id:'milk',th:'กาแฟนม',lv:'dark'},{id:'cold',th:'Cold brew',lv:'med'}];
+const PROC_OFF={washed:0,honey:-0.8,natural:-1.5};
+const AMB={t:31,rh:68};
+const INP={lot:'eth',m:10.8,d:765,proc:'washed',screen:'14/15',batch:5,brew:'omni',ag:63,end:'fused'};
+const LEARN={eth:[1.3,1.4],bra:[-0.8]};
+const HIST=[
+  {no:'#0412',lot:'Ethiopia',lv:'คั่วอ่อน',fcP:197.7,fcD:199.0,drop:206.8,time:576,dtr:16.1,agT:78,agA:77.4,src:'เสียง + เซนเซอร์รวม',ex:true},
+  {no:'#0413',lot:'Ethiopia',lv:'คั่วกลาง',fcP:199.0,fcD:199.1,drop:212.3,time:618,dtr:19.0,agT:63,agA:62.6,src:'เสียง + เซนเซอร์รวม',ex:true},
+  {no:'#0414',lot:'Brazil',lv:'คั่วกลางเข้ม',fcP:194.4,fcD:193.6,drop:213.9,time:662,dtr:21.8,agT:52,agA:51.2,src:'เสียง + เซนเซอร์รวม',ex:true}
+];
+let batchNo=415;
+
+const COMPONENTS=[
+ {id:'hopper',th:'ถังรับเมล็ดดิบ',en:'Green Bean Hopper',tag:'MECH',cls:'mech',desc:'ถังทรงกรวยรับเมล็ดกาแฟดิบก่อนเข้าถังคั่ว มีตะแกรงดักสิ่งแปลกปลอมและประตูสไลด์ปล่อยเมล็ดครั้งเดียวหมด',specs:[['ความจุ','8 kg'],['วัสดุ','SUS304 เคลือบ PVD'],['ประตู','Slide gate + limit switch'],['ตะแกรง','รู Ø4 mm']]},
+ {id:'loadcell',th:'โหลดเซลล์ชั่งน้ำหนัก',en:'Hopper Load Cells',tag:'SENS',cls:'sens',isNew:true,desc:'ชั่งน้ำหนักเมล็ดดิบก่อนเข้าถังและเมล็ดคั่วหลังออก ได้น้ำหนักที่หายไปจริง ใช้ยืนยันระดับการคั่วและปรับโมเดลความร้อนตามปริมาณจริง',specs:[['ชนิด','Shear beam C3 ×3'],['พิกัด','3 × 20 kg'],['ความละเอียด','5 g'],['ต่อเข้า','Weighing module AI-04']]},
+ {id:'drum',th:'ถังคั่วหมุน',en:'Roasting Drum',tag:'HEAT',cls:'heat',desc:'ถังผนังสองชั้นหมุนด้วยมอเตอร์ผ่านอินเวอร์เตอร์ ใบกวน 3 ใบพลิกเมล็ดให้รับความร้อนทั้งแบบนำและแบบพาอย่างสม่ำเสมอ',specs:[['ขนาดถัง','Ø540 × 600 mm'],['ผนัง','Carbon steel 4 mm + SUS'],['ความเร็ว','40–75 rpm (VFD)'],['มอเตอร์','0.75 kW เกียร์ 1:20']]},
+ {id:'burner',th:'หัวเผาแก๊ส',en:'Modulating Gas Burner',tag:'HEAT',cls:'heat',desc:'หัวเผาแบบท่อยาวใต้ถังคั่ว วาล์วปรับได้ต่อเนื่อง 0–100% รับคำสั่งจาก PID มีเซนเซอร์ UV ตรวจเปลวไฟและจุดระเบิดอัตโนมัติ',specs:[['กำลังสูงสุด','18 kW'],['เชื้อเพลิง','LPG 30 mbar'],['วาล์ว','Modulating 0–10 V'],['ตรวจเปลวไฟ','UV cell < 1 s']]},
+ {id:'probes',th:'เซนเซอร์อุณหภูมิ BT / ET',en:'Thermocouples',tag:'SENS',cls:'sens',desc:'หัววัด BT ฝังในกองเมล็ดวัดอุณหภูมิเมล็ด หัววัด ET วัดลมร้อนก่อนออกจากถัง ใช้คำนวณ RoR และเป็นอินพุตหลักของ PID',specs:[['ชนิด','K-type exposed junction'],['BT','Ø2 mm · τ ≈ 3 s'],['ET','Ø3 mm'],['ความละเอียด','0.1 °C']]},
+ {id:'acoustic',th:'เซนเซอร์เสียงแตก',en:'Acoustic Crack Sensor',tag:'SENS',cls:'sens',isNew:true,desc:'เซนเซอร์เสียงแบบสัมผัสติดผนังตัวถังรับเสียงเปลือกเมล็ดแตก กรองความถี่ 2–10 kHz ตัดเสียงมอเตอร์และถังหมุน แล้วตรวจหาจังหวะแตกด้วยอัลกอริทึม onset detection',specs:[['ตัวรับ','Piezo contact + MEMS mic'],['สุ่มสัญญาณ','48 kHz · 24-bit'],['ประมวลผล','ESP32-S3 edge'],['ส่งออก','Modbus RTU · count/s']]},
+ {id:'nir',th:'เซนเซอร์สีเมล็ด NIR',en:'Inline Color Sensor',tag:'SENS',cls:'sens',isNew:true,desc:'อ่านสีเมล็ดในถังผ่านช่องตัวอย่างทุก 2 วินาที แปลงเป็นค่าเทียบ Agtron ใช้เป็นเงื่อนไขปล่อยเมล็ดโดยตรง มีลมเป่ากันฝุ่นเกาะเลนส์',specs:[['หลักการ','NIR 850 nm + RGB'],['ช่วงวัด','Agtron 25–120'],['ความถี่','0.5 Hz'],['ต่อเข้า','RS-485 Modbus']]},
+ {id:'door',th:'ประตูปล่อยเมล็ดและช้อนตัก',en:'Discharge Door & Trier',tag:'MECH',cls:'mech',desc:'ประตูครึ่งวงกลมเปิดด้วยคันโยกถ่วงน้ำหนัก เทเมล็ดลงรางสู่ถาดเย็น ช้อนตักใช้ดึงตัวอย่างดูสี และมีช่องกระจกมองภายใน',specs:[['กลไก','คันโยก + ลูกถ่วงทองเหลือง'],['ขับ','กระบอกลม (auto drop)'],['ช้อนตัก','ด้ามไม้ ตักได้ขณะหมุน'],['เซนเซอร์','Door switch DI-04']]},
+ {id:'cooling',th:'ถาดระบายความร้อน',en:'Cooling Tray & Agitator',tag:'MECH',cls:'mech',desc:'ถาดพื้นตะแกรงรู ใบกวนสี่แขนหมุนพลิกเมล็ด พัดลมใต้ถาดดูดลมผ่านเมล็ดเพื่อหยุดปฏิกิริยาการคั่วให้เร็วที่สุด',specs:[['ขนาด','Ø840 mm'],['ใบกวน','4 แขน · 12 rpm'],['พัดลม','0.55 kW'],['เวลาลดอุณหภูมิ','< 4 นาที ถึง 35 °C']]},
+ {id:'cyclone',th:'ไซโคลนและพัดลมดูด',en:'Cyclone & Exhaust Fan',tag:'MECH',cls:'mech',desc:'ดึงลมร้อนผ่านถังคั่ว แยกเปลือกเยื่อลงถังเก็บ ติดเซนเซอร์ VOC ในท่อระบายเพื่อจับการเกิดสารระเหยช่วงใกล้แตกและเตือนไฟไหม้',specs:[['พัดลม','0.75 kW · VFD'],['ลมดูด','0–100 % + ΔP sensor'],['VOC','MOX sensor ในท่อ'],['ท่อระบาย','Ø150 mm']]},
+ {id:'panel',th:'ตู้ควบคุม',en:'Control Cabinet',tag:'CTRL',cls:'ctl',desc:'ตู้ PLC พร้อมตัวแสดงผล PID สองชุด ลูกบิดปรับแก๊ส ลมและความเร็วถัง ปุ่มหยุดฉุกเฉินต่อผ่าน safety relay',specs:[['ตัวควบคุม','PLC + HMI 10"'],['สื่อสาร','Modbus TCP / RTU'],['ไฟเข้า','380 V 3 เฟส'],['มาตรฐาน','IP54 · EN 60204-1']]},
+ {id:'housing',th:'ตัวถังและฉนวน',en:'Drum Housing',tag:'MECH',cls:'mech',desc:'โครงหุ้มถังคั่วพร้อมฉนวนเซรามิกไฟเบอร์ ลดการสูญเสียความร้อน ผิวนอกพ่นสีฝุ่นทนความร้อนและแผ่นปิดข้างทองเหลือง',specs:[['ฉนวน','Ceramic fiber 50 mm'],['ผิวนอก','ไม่เกิน 60 °C'],['สี','Powder coat 250 °C'],['แผ่นข้าง','SUS PVD ทอง']]},
+ {id:'base',th:'โครงฐานและพัดลมเย็น',en:'Base Frame & Cooling Blower',tag:'MECH',cls:'mech',desc:'โครงเหล็กรับน้ำหนักทั้งเครื่อง ภายในติดตั้งพัดลมดูดของถาดเย็นและมอเตอร์ใบกวน มีช่องเปิดบำรุงรักษาด้านหน้า',specs:[['โครง','เหล็กกล่อง 50×50'],['ปรับระดับ','ขาปรับ M16 ×4'],['น้ำหนักรวม','430 kg'],['ฐานรอง','ยางกันสั่น']]}
+];
+const TIERS=[
+ {lvl:'TIER 1 · ต้องมี',c:'var(--bt)',title:'วัดอุณหภูมิให้ถูกที่และเร็วพอ',sub:'พื้นฐานของทุกอย่าง ถ้าวัดช้าหรือผิดตำแหน่ง RoR และจุดแตกคลาดทั้งหมด',items:[
+   ['หัววัด BT แบบปลายเปิด','K-type Ø2 mm','วัดอุณหภูมิกองเมล็ด เป็นแกนของ PID และ RoR','ฝังให้จมในกองเมล็ดเสมอแม้ใส่ 1 kg ห่างผนังถังไม่น้อยกว่า 20 mm','Thermocouple module 16-bit, สุ่ม 10 Hz','RoR นิ่งขึ้น หน่วงลดจาก ~8 s เหลือ ~3 s'],
+   ['หัววัด ET และ Inlet air','K-type Ø3 mm ×2','แยกความร้อนที่เข้า (inlet) กับที่ออก (exhaust) รู้ว่าเมล็ดดูดความร้อนไปเท่าไร','Inlet ก่อนเข้าถัง, Exhaust ที่ปากท่อดูด','AI-02, AI-03','PID ตอบสนองเร็วขึ้น คุมช่วงหลังแตกไม่ให้ RoR ดิ่ง'],
+   ['เซนเซอร์แรงดันแก๊สและ ΔP ลม','0–50 mbar · 0–500 Pa','วัดความร้อนและลมที่ให้จริง แทนการดูแค่เปอร์เซ็นต์วาล์ว','หลังวาล์วปรับ และคร่อมถังคั่ว','4–20 mA','ทำซ้ำโปรไฟล์ได้แม่นแม้แรงดันถังแก๊สตก']
+ ]},
+ {lvl:'TIER 2 · แนะนำอย่างยิ่ง',c:'var(--ac)',title:'วัดสิ่งที่เกิดกับเมล็ดโดยตรง',sub:'สามอย่างนี้คือคำตอบว่า “รู้ได้ไงว่าถึงจุดแตก” และ “รู้ได้ไงว่าได้สีที่ต้องการ”',items:[
+   ['เซนเซอร์เสียงแตก','Piezo + MEMS · 48 kHz','ฟังเสียงเปลือกเมล็ดแตก นับจำนวนครั้งต่อวินาที เป็นหลักฐานโดยตรงของจุดแตก','ติดแน่นกับผนังตัวถังด้านข้าง และไมค์ในท่อดูด','Edge ESP32-S3 → Modbus RTU','จับจุดแตกได้จากเหตุการณ์จริง ไม่ต้องเดาจากอุณหภูมิ'],
+   ['เซนเซอร์สีเมล็ด NIR','NIR 850 nm + RGB','อ่านสีเมล็ดขณะคั่วเทียบ Agtron ใช้ตัดสินจุดปล่อยตามสีที่ลูกค้าต้องการ','ช่องตัวอย่างด้านหน้าถัง มีลมเป่ากันฝุ่น','RS-485 Modbus','ปล่อยตรงสีเป้าหมายแม้ล็อตเมล็ดเปลี่ยน'],
+   ['โหลดเซลล์ + เครื่องวัดความชื้นเมล็ด','C3 ×3 · Moisture meter','ชั่งน้ำหนักเข้า–ออก และวัดความชื้น/ความหนาแน่นก่อนคั่ว ให้ระบบคำนวณแผนได้ถูก','ใต้ถังรับเมล็ด, เครื่องวัดแบบมือถือที่จุดรับเมล็ด','Weighing module, ป้อนค่าที่ HMI','ได้ % น้ำหนักหายจริงทุกแบทช์ ใช้ปรับโมเดลความร้อน']
+ ]},
+ {lvl:'TIER 3 · ระดับสูง',c:'var(--voc)',title:'ยืนยันซ้ำและเรียนรู้',sub:'เพิ่มความมั่นใจ ลดสัญญาณหลอก และทำให้ระบบแม่นขึ้นทุกแบทช์',items:[
+   ['เซนเซอร์ VOC ในท่อระบาย','MOX / PID sensor','จับสารระเหยที่เพิ่มขึ้นช่วงก่อนและหลังแตก เป็นช่องยืนยันที่สาม และเตือนไฟไหม้ในถัง','ท่อระบายหลังไซโคลน ผ่านตัวกรองฝุ่น','AI-05 · 4–20 mA','กันการแจ้งแตกผิดจากเสียงกระแทก'],
+   ['เซนเซอร์อุณหภูมิและความชื้นห้อง','T/RH ±0.3 °C · ±2 %RH','ชดเชยอุณหภูมิใส่เมล็ดตามสภาพอากาศแต่ละวัน','ใกล้ช่องลมเข้าของหัวเผา','Modbus RTU','ลดความต่างของแบทช์เช้าและบ่าย'],
+   ['เครื่องวัดสีผงกาแฟ QC','Handheld NIR','วัดสีผงกาแฟหลังบดเพื่อสอบเทียบเซนเซอร์ในถังเป็นระยะ','ห้อง QC','ป้อนผลที่ HMI','เซนเซอร์ในถังไม่ drift ตลอดอายุใช้งาน']
+ ]}
+];
+const OP_INPUTS=[
+ ['req','ล็อตและแหล่งเมล็ด','ใช้ดึงประวัติจุดแตกจริงของล็อตเดียวกันมาปรับการคาดการณ์'],
+ ['req','ความชื้นเมล็ด (%)','ชื้นมากต้องอบแห้งนานขึ้น และจุดแตกเลื่อนสูงขึ้น'],
+ ['req','ความหนาแน่น (g/L)','เมล็ดแน่นรับความร้อนช้า ต้องใช้อุณหภูมิใส่เมล็ดสูงขึ้น'],
+ ['req','กระบวนการแปรรูป','Natural และ Honey มีน้ำตาลมาก แตกเร็วกว่าและไหม้ผิวง่าย'],
+ ['req','น้ำหนักต่อแบทช์','วัดจากโหลดเซลล์อัตโนมัติ ใช้ปรับกำลังไฟและเวลา'],
+ ['req','วิธีชงหรือสีเป้าหมาย','ผู้ใช้เลือกวิธีชง ระบบเสนอระดับคั่วและค่า Agtron ให้ ปรับละเอียดได้'],
+ ['opt','ขนาดเมล็ด (Screen)','เมล็ดขนาดไม่สม่ำเสมอทำให้สีไม่เท่ากัน ระบบเตือนให้ลด RoR ช่วงท้าย'],
+ ['opt','ผล Cupping หลังคั่ว','ให้คะแนนรสชาติกลับเข้าระบบ เพื่อเลือกโปรไฟล์ที่ดีที่สุดของแต่ละล็อต']
+];
+const SPECS=[
+ ['grp','การผลิต'],['รุ่น','RX-5'],['ความจุต่อแบทช์','1–6 kg (ใช้งานจริง 5 kg)'],['กำลังผลิต','ประมาณ 20 kg/ชม.'],['เวลาต่อแบทช์','9–13 นาที + ระบายความร้อน 4 นาที'],
+ ['grp','ความร้อน'],['แหล่งความร้อน','LPG 18 kW'],['อุณหภูมิลมสูงสุด','300 °C'],['การควบคุม','PID แก๊สตามแผนคั่ว + ลมตามช่วง'],
+ ['grp','การวัดและตรวจจับ'],['อุณหภูมิ','BT, ET, Inlet · K-type 0.1 °C'],['จุดแตก','Acoustic + BT + VOC + RoR fusion'],['จุดปล่อย','สี NIR + DTR · เพดาน BT'],['น้ำหนัก','Load cell 3 × 20 kg · 5 g'],
+ ['grp','ไฟฟ้าและขนาด'],['แหล่งจ่าย','380 V 3 เฟส 50 Hz · 2.8 kW'],['กว้าง × ลึก × สูง','1,250 × 1,050 × 1,950 mm'],['น้ำหนัก','430 kg']
+];
+const INTERLOCKS=[
+ ['IL-01','เปลวไฟดับ','UV cell ไม่เห็นเปลวไฟเกิน 1 วินาที ปิดโซลินอยด์แก๊สทั้งสองตัวและแจ้งเตือน'],
+ ['IL-02','ลมดูดไม่ทำงาน','ΔP switch ยืนยันลมก่อนจุดเตา และตัดแก๊สทันทีเมื่อลมหาย'],
+ ['IL-03','ไล่ลมก่อนจุด','Pre-purge 30 วินาทีทุกครั้งก่อนจุดระเบิด'],
+ ['IL-04','อุณหภูมิสูงเกิน','ถึงเพดาน BT ของแผนคั่วปล่อยเมล็ดทันที · ET เกิน 300 °C ตัดแก๊ส'],
+ ['IL-05','หยุดฉุกเฉิน','E-stop Category 0 ตัดแก๊ส มอเตอร์ และหัวจุดผ่าน safety relay'],
+ ['IL-06','ไฟไหม้ในถัง','VOC พุ่งผิดปกติร่วมกับ ET ขึ้นเร็ว ปิดแก๊ส ปิดลมดูด และแจ้งเตือน']
+];
+const BEAN_STOPS=[[25,[0.47,0.54,0.33]],[140,[0.74,0.68,0.44]],[165,[0.72,0.54,0.31]],[190,[0.56,0.36,0.2]],[205,[0.42,0.25,0.13]],[215,[0.32,0.19,0.1]],[228,[0.2,0.12,0.07]],[245,[0.12,0.07,0.04]]];
+function beanRGB(t){ if(t<=BEAN_STOPS[0][0]) return BEAN_STOPS[0][1];
+  for(let i=1;i<BEAN_STOPS.length;i++){const [a,ca]=BEAN_STOPS[i-1],[b,cb]=BEAN_STOPS[i]; if(t<=b){const u=(t-a)/(b-a);return [lerp(ca[0],cb[0],u),lerp(ca[1],cb[1],u),lerp(ca[2],cb[2],u)];}}
+  return BEAN_STOPS[BEAN_STOPS.length-1][1]; }
+function agRGB(ag){ return beanRGB(196+(95-ag)/2-3+0.0); }
+const rgbCss=c=>`rgb(${c.map(v=>Math.round(v*255)).join(',')})`;
+
+/* ================= PLAN ================= */
+function fcModel(i){ return 196+(i.m-10.5)*1.2+(i.d-720)*0.03+(PROC_OFF[i.proc]||0); }
+function learned(lot){ const a=LEARN[lot]||[]; return a.length?{n:a.length,v:a.reduce((x,y)=>x+y,0)/a.length}:{n:0,v:0}; }
+function levelOf(ag){ let best=LEVELS[0],d=99; LEVELS.forEach(l=>{const x=Math.abs(l.ag-ag);if(x<d){d=x;best=l;}}); return best.id; }
+function computePlan(i){
+  const base=fcModel(i),L=learned(i.lot),fc=base+L.v;
+  const ag=i.ag,dtr=clamp(15+(80-ag)*0.25,14,26),drop=fc+(95-ag)/2-3;
+  const fcTime=480+(i.d-720)*0.3+(i.m-10.5)*12+(i.batch-5)*6;
+  const time=fcTime/(1-dtr/100);
+  const chargeET=205+(i.d-720)*0.12+(i.m-10.5)*2.5+(i.batch-5)*3+(ag<55?5:0)+(28-AMB.t)*0.2;
+  const chargeGas=clamp(64+(i.batch-5)*3+(i.d-720)*0.03,40,90);
+  return {fc,fcBase:base,learnN:L.n,learnV:L.v,ag,dtr,drop,fcTime,time,chargeET,chargeGas,baseGas:chargeGas-13,cap:drop+9,lot:i.lot,level:levelOf(ag),end:i.end,m:i.m,d:i.d,proc:i.proc,batch:i.batch};
+}
+function refBT(t,P){ if(t<90) return null; const u=Math.min(1,(t-90)/(P.time-90)); const a=1.4; return 95+(P.drop-95)*(1-Math.exp(-a*u))/(1-Math.exp(-a)); }
+
+/* ================= SIMULATION ================= */
+const SENS={ac:true,nir:true,voc:true};
+const S={state:'OFF',t:0,gas:0,gasCmd:0,air:35,rpm:58,et:28,probe:28,bean:25,charged:false,auto:true,speed:5,I:0,
+  rec:[],lastRec:-1,minProbe:999,minT:0,tp:null,deT:null,fcT:null,fcBT:null,fcSrc:null,dropT:null,dropBT:null,dropBean:null,trayT:26,events:[],manualGas:60,chargeAnim:0,dropAnim:0,
+  plan:computePlan(INP),fcTrue:196,pops:[],voc:0,color:null,conf:0,cnt:0,sc:{ac:0,bt:0,voc:0,ror:0},agFinal:null,lossFinal:null,dropAdvice:null,lastPopReal:0};
+function phaseOf(){ if(!S.charged&&S.dropT==null) return null; if(S.deT==null) return 'dry'; if(S.fcT==null) return 'mai'; return 'dev'; }
+function log(type,text,val){ S.events.unshift({ts:(S.state==='ROASTING'||S.dropT!=null)?S.t:null,type,text,val,wall:new Date()}); if(S.events.length>50) S.events.pop(); renderEvents(); }
+const popQ=[];
+function addPop(real){ S.pops.push({t:S.t,real}); popQ.push(real?0.55+Math.random()*0.45:0.22+Math.random()*0.15); if(three) three.pop(); playPop(real); }
+function dtrNow(){ return S.fcT!=null&&S.t>0?(S.t-S.fcT)/S.t*100:0; }
+
+function step(dt){
+  const P=S.plan, st=S.state;
+  if(st==='OFF'||st==='ESTOP') S.gasCmd=0;
+  else if(st==='PREHEAT'||st==='READY'){
+    const ff=(P.chargeET+S.air*0.4-30)/390*100; S.gasCmd=clamp(ff+(P.chargeET-S.et)*3,0,100);
+    if(st==='PREHEAT'&&S.et>=P.chargeET-1.5){ S.state='READY'; log('ok','อุ่นเครื่องเสร็จ พร้อมใส่เมล็ด',Math.round(S.et)+' °C'); }
+  } else if(st==='ROASTING'){
+    if(S.auto){ if(S.t<90) S.gasCmd=P.chargeGas; else { const e=refBT(S.t+20,P)-S.probe; S.I=clamp(S.I+e*dt,-600,600); S.gasCmd=clamp(P.baseGas+1.2*e+0.012*S.I,0,100); } }
+    else S.gasCmd=S.manualGas;
+  } else S.gasCmd=S.auto?30:S.manualGas;
+  S.gas+=clamp(S.gasCmd-S.gas,-3*dt,3*dt); if(st==='ESTOP') S.gas=0;
+  if(S.auto){ const ph=phaseOf(); const at=st==='ROASTING'?(ph==='dry'?35:ph==='mai'?50:65):(st==='COOLING'||st==='DONE'?60:35); S.air+=(at-S.air)*Math.min(1,dt/10); }
+  const load=S.charged?(S.et-S.bean)*0.12*(P.batch/5):0;
+  S.et+=((30+S.gas/100*390-S.air/100*40-load)-S.et)*dt/55;
+  const rpm=st==='ESTOP'?0:S.rpm;
+  if(S.charged){
+    const drying=S.deT==null;
+    const k=0.0042*Math.pow(5/P.batch,0.35)*(0.85+0.3*(rpm-40)/35)*Math.pow(720/P.d,0.6)*(drying?1-(P.m-10.5)*0.04:1);
+    const x=S.bean-S.fcTrue; const q=(x>-1&&x<3)?-0.05:(x>=3&&x<18?0.03:0);
+    S.bean+=(k*(S.et-S.bean)+q)*dt;
+  }
+  S.probe+=((S.charged?0.86*S.bean+0.14*S.et:S.et*0.9)-S.probe)*dt/20;
+  if(st==='COOLING'||st==='DONE'){ S.trayT+=(27-S.trayT)*dt/(S.air>40?55:80); if(st==='COOLING'&&S.trayT<35) finishBatch(); }
+  if(st!=='ROASTING') return;
+  S.t+=dt;
+  // ---- acoustic events ----
+  const x=S.bean-S.fcTrue;
+  const rReal=x>-1.5?2.4*Math.exp(-Math.pow((x-4)/4.5,2)):0;
+  if(Math.random()<1-Math.exp(-rReal*dt)) addPop(true);
+  if(Math.random()<1-Math.exp(-0.014*dt)) addPop(false);
+  // ---- channels ----
+  const win=S.pops.filter(p=>p.t>S.t-15); S.cnt=win.length;
+  S.sc.ac=SENS.ac?clamp((S.cnt-1)/4,0,1):0;
+  S.sc.bt=clamp((S.probe-(P.fc-5))/6,0,1);
+  S.voc+=((SENS.voc?clamp((S.bean-(S.fcTrue-8))/10,0,1):0)-S.voc)*Math.min(1,dt/12); S.sc.voc=SENS.voc?S.voc:0;
+  const R=S.rec; S.sc.ror=0; if(R.length>62){const a=R[R.length-61].ror,b=R[R.length-1].ror; if(a!=null&&b!=null&&S.probe>P.fc-8) S.sc.ror=clamp((a-b-1.5)/2.5,0,1);}
+  const w={ac:SENS.ac?.5:0,bt:.2,voc:SENS.voc?.18:0,ror:.12}; const sw=w.ac+w.bt+w.voc+w.ror;
+  S.conf=(w.ac*S.sc.ac+w.bt*S.sc.bt+w.voc*S.sc.voc+w.ror*S.sc.ror)/sw;
+  if(S.deT!=null&&S.fcT==null){
+    const need=(SENS.ac||SENS.voc)?0.72:0.6;
+    if(S.conf>=need&&(!SENS.ac||S.cnt>=3)){
+      S.fcT=SENS.ac?win[0].t:S.t; const r=R[Math.max(0,Math.min(R.length-1,Math.floor(S.fcT)))]; S.fcBT=r?r.bt:S.probe;
+      S.fcSrc=SENS.ac?(SENS.voc?'เสียง + เซนเซอร์รวม':'เสียง + BT'):(SENS.voc?'BT + VOC':'BT อย่างเดียว');
+      log('fc','ตรวจพบจุดแตกครั้งแรก · '+S.fcSrc,S.fcBT.toFixed(1)+' °C'); chartDirty=true;
+    }
+  }
+  // ---- color ----
+  if(SENS.nir&&S.bean>150){ const c=clamp(95-(S.bean-S.fcTrue+3)*2+(Math.random()-.5)*0.8,20,160); S.color=S.color==null?c:S.color+(c-S.color)*Math.min(1,dt/2); } else S.color=null;
+  // ---- phase events ----
+  if(S.probe<S.minProbe){S.minProbe=S.probe;S.minT=S.t;}
+  else if(!S.tp&&S.t>15&&S.probe>S.minProbe+0.3){ S.tp={t:S.minT,bt:S.minProbe}; log('tp','จุดกลับตัว (Turning Point)',S.minProbe.toFixed(1)+' °C'); }
+  if(S.tp&&S.deT==null&&S.probe>=150){ S.deT=S.t; log('de','สิ้นสุดช่วงอบแห้ง · เมล็ดเริ่มเหลือง','150 °C'); }
+  const s=Math.floor(S.t);
+  if(s>S.lastRec){ S.lastRec=s; const back=R[Math.max(0,R.length-30)]; const ror=back&&s-back.t>0?(S.probe-back.bt)/(s-back.t)*60:0;
+    R.push({t:s,bt:S.probe,et:S.et,ror:S.tp?ror:null,gas:S.gas,air:S.air,ref:refBT(s,P),ag:S.color,conf:S.conf}); chartDirty=true; }
+  // ---- end point ----
+  const d=dtrNow(), colorOK=SENS.nir&&S.color!=null&&S.color<=P.ag; let why=null;
+  if(S.probe>=P.cap) why='ถึงเพดานอุณหภูมิ '+P.cap.toFixed(0)+' °C (IL-04)';
+  else if(P.end==='temp'&&S.probe>=P.drop) why='BT ถึง '+P.drop.toFixed(1)+' °C';
+  else if(P.end==='dtr'&&S.fcT!=null&&d>=P.dtr) why='DTR ถึง '+P.dtr.toFixed(1)+' %';
+  else if(P.end==='color'){ if(SENS.nir?colorOK:S.probe>=P.drop) why=SENS.nir?'สีถึง Agtron '+P.ag:'NIR ปิด ใช้ BT '+P.drop.toFixed(1)+' °C แทน'; }
+  else if(P.end==='fused'&&S.fcT!=null){ if((colorOK||!SENS.nir)&&d>=P.dtr-2.5) why=SENS.nir?'สี Agtron ≤ '+P.ag+' และ DTR '+d.toFixed(1)+' %':'DTR '+d.toFixed(1)+' % (NIR ปิด)'; else if(d>=P.dtr+3) why='DTR เกินเป้า '+d.toFixed(1)+' %'; }
+  S.dropAdvice=why;
+  if(why&&(S.auto||S.probe>=P.cap)) drop('auto',why);
+}
+function curRoR(){ const r=S.rec; return r.length?r[r.length-1].ror:null; }
+
+function doPreheat(){ if(S.state!=='OFF') return; S.plan=computePlan(INP); S.state='PREHEAT'; log('info','ไล่ลม 30 วินาที จุดเตา เริ่มอุ่นเครื่อง','→ '+S.plan.chargeET.toFixed(0)+' °C'); }
+function doCharge(){ if(S.state!=='READY') return; S.plan=computePlan(INP); const P=S.plan,lot=LOTS[INP.lot];
+  S.fcTrue=fcModel(INP)+(lot?lot.bias:0)+(Math.random()-.5)*1.2;
+  Object.assign(S,{state:'ROASTING',t:0,charged:true,bean:25,I:0,rec:[],lastRec:-1,minProbe:999,minT:0,tp:null,deT:null,fcT:null,fcBT:null,fcSrc:null,dropT:null,dropBT:null,dropBean:null,chargeAnim:0,dropAnim:0,pops:[],voc:0,color:null,conf:0,agFinal:null,lossFinal:null});
+  S.et-=30; log('charge','ใส่เมล็ด '+P.batch.toFixed(1)+' kg · '+(lot?lot.short:'Custom')+' · '+LEVEL_TH[P.level],'Agtron '+P.ag); chartDirty=true; updateKPIs(); renderPlan(); }
+function drop(src,why){ if(S.state!=='ROASTING') return; S.state='COOLING'; S.dropT=S.t; S.dropBT=S.probe; S.dropBean=S.bean; S.trayT=S.bean; S.charged=false; S.dropAnim=0.0001;
+  S.agFinal=clamp(95-(S.bean-S.fcTrue+3)*2+(Math.random()-.5)*1.2,20,120); S.lossFinal=clamp(11+(S.bean-S.fcTrue)*0.4+(S.plan.m-10.5)*0.8,8,24);
+  log('drop',src==='auto'?'ปล่อยเมล็ดอัตโนมัติ · '+why:'ปล่อยเมล็ด (สั่งด้วยมือ)',S.probe.toFixed(1)+' °C'); chartDirty=true; updateKPIs(); }
+function finishBatch(){ S.state='DONE'; const P=S.plan; log('ok','ระบายความร้อนเสร็จ เมล็ดพร้อมบรรจุ',S.trayT.toFixed(0)+' °C');
+  if(S.fcBT!=null&&S.fcSrc&&S.fcSrc.indexOf('เสียง')===0){ const a=LEARN[P.lot]||(LEARN[P.lot]=[]); a.push(S.fcBT-P.fcBase); if(a.length>6)a.shift(); }
+  HIST.push({no:'#0'+(batchNo++),lot:LOTS[P.lot]?LOTS[P.lot].short:'Custom',lv:LEVEL_TH[P.level],fcP:P.fc,fcD:S.fcBT,drop:S.dropBT,time:S.dropT,dtr:S.fcT!=null?(S.dropT-S.fcT)/S.dropT*100:null,agT:P.ag,agA:S.agFinal,src:S.fcSrc||'ไม่พบ'});
+  renderHist(); renderPlan(); renderLotVar(); updateKPIs(); }
+function newBatch(){ if(S.state!=='DONE'&&S.state!=='COOLING') return; S.dropAnim=0; S.plan=computePlan(INP); S.state='PREHEAT'; S.t=0; S.rec=[]; S.lastRec=-1; S.tp=S.deT=S.fcT=null; S.dropT=S.dropBT=null; S.pops=[]; S.color=null; S.conf=0;
+  log('info','เริ่มแบทช์ใหม่ อุ่นเครื่องสู่อุณหภูมิใส่เมล็ด',S.plan.chargeET.toFixed(0)+' °C'); chartDirty=true; updateKPIs(); renderPlan(); }
+function markFC(){ if(S.state!=='ROASTING'||S.fcT!=null||S.deT==null) return; S.fcT=S.t; S.fcBT=S.probe; S.fcSrc='ผู้ควบคุมมาร์ค'; log('fc','ผู้ควบคุมมาร์คจุดแตกครั้งแรก',S.probe.toFixed(1)+' °C'); chartDirty=true; }
+function estop(){ if(S.state==='ESTOP'){ S.state='OFF'; S.charged=false; S.dropAnim=0; log('info','รีเซ็ตระบบหลังหยุดฉุกเฉิน',''); return; }
+  S.state='ESTOP'; S.gas=0; log('crit','หยุดฉุกเฉิน · ตัดแก๊สและมอเตอร์ทั้งหมด (IL-05)',''); }
+
+/* ================= SOUND ================= */
+let actx=null,sndOn=false,lastSnd=0;
+function playPop(real){ if(!sndOn||!actx) return; const now=actx.currentTime; if(now-lastSnd<0.04) return; lastSnd=now;
+  const len=0.035,buf=actx.createBuffer(1,Math.floor(actx.sampleRate*len),actx.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4);
+  const src=actx.createBufferSource(); src.buffer=buf; const f=actx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=real?3200+Math.random()*1500:1400; f.Q.value=1.2;
+  const g=actx.createGain(); g.gain.value=real?0.5:0.18; src.connect(f); f.connect(g); g.connect(actx.destination); src.start(); }
+$('sndSw').onclick=()=>{ sndOn=!sndOn; $('sndSw').setAttribute('aria-checked',sndOn); if(sndOn&&!actx){ try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){sndOn=false;$('sndSw').setAttribute('aria-checked','false');} } if(actx&&actx.state==='suspended') actx.resume(); };
+
+/* ================= UI : HMI ================= */
+const STATE_TH={OFF:'ปิดเครื่อง',PREHEAT:'กำลังอุ่นเครื่อง',READY:'พร้อมใส่เมล็ด',ROASTING:'กำลังคั่ว',COOLING:'ระบายความร้อน',DONE:'จบแบทช์',ESTOP:'หยุดฉุกเฉิน'};
+const PHASE_TH={dry:['อบแห้ง','DRYING'],mai:['เมลลาร์ด','MAILLARD'],dev:['พัฒนารสชาติ','DEVELOPMENT']};
+function setRange(el,v){ el.value=v; el.style.setProperty('--p',((v-el.min)/(el.max-el.min)*100)+'%'); }
+const ICON='<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5 15 14H1z"/></svg>';
+let lastUI=0;
+function updateUI(){
+  const P=S.plan,roasting=S.state==='ROASTING';
+  $('statePill').dataset.s=S.state; $('stateTxt').textContent=STATE_TH[S.state];
+  $('clock').textContent='SIM ×'+S.speed+' · '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  $('estop').lastChild.textContent=S.state==='ESTOP'?'RESET':'E-STOP';
+  $('rTime').textContent=fmt(S.dropT!=null?S.dropT:S.t);
+  const ph=roasting?phaseOf():null;
+  $('rPhase').innerHTML=ph?`${PHASE_TH[ph][0]}<small>${PHASE_TH[ph][1]}</small>`:`${STATE_TH[S.state]}<small>${S.state}</small>`;
+  $('rBT').innerHTML=S.probe.toFixed(1)+'<small>°C</small>';
+  const ref=roasting?refBT(S.t,P):null;
+  $('rBTs').textContent=ref?`เป้า ${ref.toFixed(0)} · Δ ${sgn(S.probe-ref)}`:(S.state==='COOLING'||S.state==='DONE'?`ถาดเย็น ${S.trayT.toFixed(0)} °C`:`เพดาน ${P.cap.toFixed(0)} °C`);
+  $('rET').innerHTML=S.et.toFixed(1)+'<small>°C</small>';
+  $('rETs').textContent=(S.state==='PREHEAT'||S.state==='READY')?`เป้าใส่เมล็ด ${P.chargeET.toFixed(0)} °C`:'ลมร้อนทางออกถัง';
+  const ror=roasting?curRoR():null;
+  $('rROR').innerHTML=(ror==null?'—':ror.toFixed(1))+'<small>°C/min</small>';
+  const conf=roasting?S.conf*100:(S.fcT!=null?100:null);
+  $('rConf').innerHTML=(conf==null?'—':conf.toFixed(0))+'<small>%</small>';
+  $('rConfS').textContent=S.fcT!=null?`แตกที่ ${fmtS(S.fcT)} · ${S.fcBT.toFixed(1)} °C`:(roasting?`คาดการณ์ ${P.fc.toFixed(1)} °C`:'รอเริ่มคั่ว');
+  const end=S.dropT!=null?S.dropT:S.t, dtr=S.fcT!=null?(end-S.fcT)/end*100:null;
+  $('rDTR').innerHTML=(dtr==null?'—':dtr.toFixed(1))+'<small>%</small>';
+  $('rDTRs').textContent=`เป้า ${P.dtr.toFixed(1)} %`+(S.fcT!=null?` · ${fmtS(end-S.fcT)}`:'');
+  const agv=S.dropT!=null&&S.agFinal!=null?S.agFinal:S.color;
+  $('rAg').innerHTML=(!SENS.nir?'OFF':agv==null||agv>120?'—':agv.toFixed(1))+(SENS.nir?'<small>Ag</small>':'');
+  $('rAgS').textContent=SENS.nir?`เป้า ${P.ag}`+(agv!=null&&agv<=120?` · เหลือ ${Math.max(0,agv-P.ag).toFixed(1)}`:''):'เซนเซอร์ถูกปิด';
+  const tot=Math.max(P.time,end);
+  const dry=S.deT!=null?S.deT:(S.charged||S.dropT!=null?end:0), mai=S.deT!=null?((S.fcT!=null?S.fcT:end)-S.deT):0, dev=S.fcT!=null?end-S.fcT:0;
+  $('pbDry').style.width=(dry/tot*100)+'%'; $('pbMai').style.width=(mai/tot*100)+'%'; $('pbDev').style.width=(dev/tot*100)+'%';
+  $('lgDry').textContent=fmtS(dry); $('lgMai').textContent=fmtS(mai); $('lgDev').textContent=fmtS(dev);
+  const gasEl=$('gasR'); gasEl.disabled=S.auto; if(S.auto||document.activeElement!==gasEl) setRange(gasEl,Math.round(S.auto?S.gas:S.manualGas));
+  $('gasO').textContent=Math.round(S.gas)+' %'; $('gasTag').hidden=!S.auto;
+  const airEl=$('airR'); airEl.disabled=S.auto; if(S.auto) setRange(airEl,Math.round(S.air)); $('airO').textContent=Math.round(S.air)+' %'; $('airTag').hidden=!S.auto;
+  $('aPre').disabled=S.state!=='OFF'; $('aChg').disabled=S.state!=='READY'; $('aDrop').disabled=!roasting; $('aNew').disabled=!(S.state==='DONE'||S.state==='COOLING');
+  $('aFC').disabled=!(roasting&&S.fcT==null&&S.deT!=null);
+  $('aChg').classList.toggle('primary',S.state==='READY'); $('aPre').classList.toggle('primary',S.state==='OFF');
+  $('aDrop').classList.toggle('primary',roasting&&!S.auto&&!!S.dropAdvice); $('aNew').classList.toggle('primary',S.state==='DONE');
+  const al=[];
+  if(S.state==='ESTOP') al.push(['crit','หยุดฉุกเฉินทำงานอยู่ กด RESET เพื่อกลับสู่สถานะปกติ']);
+  if(S.et>290) al.push(['crit','ET สูงเกิน 290 °C ใกล้ขีดตัดแก๊ส']);
+  if(roasting&&!S.auto&&S.dropAdvice) al.push(['info','ถึงเงื่อนไขปล่อยเมล็ดแล้ว: '+S.dropAdvice]);
+  if(roasting&&S.fcT!=null&&ror!=null&&ror<1.5) al.push(['warn','RoR ต่ำหลังแตก เสี่ยงรสแบน เพิ่มแก๊สหรือปล่อยเมล็ด']);
+  if(roasting&&S.fcT==null&&S.probe>P.fc+4) al.push(['warn',`BT เกินจุดแตกคาดการณ์ ${(S.probe-P.fc).toFixed(1)} °C แต่ยังไม่ยืนยันการแตก`]);
+  if(roasting&&P.end!=='temp'&&!SENS.nir&&(P.end==='color'||P.end==='fused')) al.push(['warn','เซนเซอร์สีปิดอยู่ ระบบใช้ DTR หรือ BT แทนสีจริง']);
+  const html=al.map(a=>`<div class="alarm ${a[0]}">${ICON}${a[1]}</div>`).join('');
+  if($('alarms').innerHTML!==html) $('alarms').innerHTML=html;
+  if(!$('info').hidden&&selId){const l=$('infoLive');if(l)l.textContent=liveFor(selId);}
+  updateFC(); updateFlow();
+  if(roasting) updateKPIs();
+}
+function updateKPIs(){
+  const done=S.dropT!=null, P=S.plan;
+  $('kpiNote').textContent=done?'ผลจริงของแบทช์นี้':(S.state==='ROASTING'?'ค่าประมาณถ้าปล่อยตอนนี้':'รอเริ่มคั่ว');
+  const bean=done?S.dropBean:(S.state==='ROASTING'?S.bean:null);
+  if(bean==null||bean<150){ ['kDrop','kLoss','kAg','kOut'].forEach(k=>$(k).textContent='—'); $('kSw').style.background='transparent'; $('kAgS').textContent='ระดับสี'; $('kDropS').textContent='อุณหภูมิ · เวลา'; return; }
+  const bt=done?S.dropBT:S.probe,t=done?S.dropT:S.t;
+  $('kDrop').innerHTML=bt.toFixed(1)+'<small>°C</small>'; $('kDropS').textContent='เวลา '+fmtS(t)+' นาที';
+  const loss=done?S.lossFinal:clamp(11+(bean-S.fcTrue)*0.4+(P.m-10.5)*0.8,8,24);
+  $('kLoss').innerHTML=loss.toFixed(1)+'<small>%</small>'; $('kLossS').textContent=done?'จากโหลดเซลล์ เข้า–ออก':'ประมาณการ';
+  const ag=done?S.agFinal:clamp(95-(bean-S.fcTrue+3)*2,20,140);
+  $('kAg').textContent=ag>120?'›120':ag.toFixed(1);
+  $('kAgS').textContent=`เป้า ${P.ag} · `+(ag>70?'คั่วอ่อน':ag>57?'คั่วกลาง':ag>47?'กลางเข้ม':'คั่วเข้ม');
+  $('kSw').style.background=rgbCss(beanRGB(bean));
+  $('kOut').innerHTML=(P.batch*(1-loss/100)).toFixed(2)+'<small>kg</small>';
+}
+const EVT_C={tp:'var(--ror)',de:'var(--dry)',fc:'var(--ac)',drop:'var(--brass)',charge:'var(--bt)',ok:'var(--ok)',crit:'var(--crit)',info:'var(--muted)'};
+function renderEvents(){
+  $('evts').innerHTML=S.events.map(e=>`<li><span class="t">${e.ts!=null?fmtS(e.ts):e.wall.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</span><span class="d" style="--c:${EVT_C[e.type]||'var(--muted)'}"></span><span>${e.text}</span><span class="val">${e.val||''}</span></li>`).join('')||'<li><span></span><span></span><span class="muted">ยังไม่มีเหตุการณ์</span><span></span></li>';
+}
+function renderHist(){
+  $('hist').innerHTML=HIST.slice().reverse().map(h=>{const diff=h.fcD!=null?h.fcD-h.fcP:null;const agd=h.agA!=null?h.agA-h.agT:null;
+    return `<tr><td>${h.no}${h.ex?'<span class="ex">ตัวอย่าง</span>':''}</td><td class="l">${h.lot}</td><td class="l">${h.lv}</td><td>${h.fcP.toFixed(1)} °C</td><td>${h.fcD!=null?h.fcD.toFixed(1)+' °C <span class="'+(Math.abs(diff)<1?'dg':'dw')+'">('+sgn(diff)+')</span>':'—'}</td><td>${h.drop.toFixed(1)} °C</td><td>${fmtS(h.time)}</td><td>${h.dtr!=null?h.dtr.toFixed(1)+' %':'—'}</td><td>${h.agT} → ${h.agA.toFixed(1)} <span class="${Math.abs(agd)<=2?'dg':'dw'}">(${sgn(agd)})</span></td><td class="l">${h.src}</td></tr>`;}).join('');
+}
+
+// controls
+$('mAuto').onclick=()=>{S.auto=true;$('mAuto').setAttribute('aria-pressed','true');$('mMan').setAttribute('aria-pressed','false');log('info','โหมด AUTO · PID คุมแก๊ส ปล่อยเมล็ดตามเงื่อนไข','');};
+$('mMan').onclick=()=>{S.auto=false;S.manualGas=Math.round(S.gas);$('mMan').setAttribute('aria-pressed','true');$('mAuto').setAttribute('aria-pressed','false');log('info','โหมด MANUAL · ระบบแนะนำจุดปล่อยแต่ไม่ปล่อยเอง','แก๊ส '+S.manualGas+' %');};
+document.querySelectorAll('#speedSeg button').forEach(b=>b.onclick=()=>{S.speed=+b.dataset.sp;document.querySelectorAll('#speedSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));});
+$('gasR').oninput=e=>{S.manualGas=+e.target.value;setRange(e.target,S.manualGas);};
+$('airR').oninput=e=>{S.air=+e.target.value;setRange(e.target,S.air);};
+$('rpmR').oninput=e=>{S.rpm=+e.target.value;setRange(e.target,S.rpm);$('rpmO').textContent=S.rpm+' rpm';};
+setRange($('rpmR'),58);
+$('aPre').onclick=doPreheat; $('aChg').onclick=doCharge; $('aDrop').onclick=()=>drop('manual'); $('aNew').onclick=newBatch; $('estop').onclick=estop; $('aFC').onclick=markFC;
+$('copyCsv').onclick=()=>{
+  const csv='time_s,BT_C,ET_C,RoR_C_per_min,gas_pct,air_pct,target_C,agtron_nir,fc_confidence\n'+S.rec.map(r=>[r.t,r.bt.toFixed(1),r.et.toFixed(1),r.ror==null?'':r.ror.toFixed(2),r.gas.toFixed(0),r.air.toFixed(0),r.ref==null?'':r.ref.toFixed(1),r.ag==null?'':r.ag.toFixed(1),r.conf.toFixed(2)].join(',')).join('\n');
+  const box=$('csvBox'); const fallback=()=>{box.hidden=false;box.value=csv;box.focus();box.select();$('copyCsv').textContent='เลือกข้อความแล้ว คัดลอกเองได้';};
+  try{navigator.clipboard.writeText(csv).then(()=>{$('copyCsv').textContent='คัดลอกแล้ว '+S.rec.length+' แถว';setTimeout(()=>$('copyCsv').textContent='คัดลอก CSV',2200);},fallback);}catch(e){fallback();}
+};
+
+/* ================= SETUP ================= */
+$('lotSel').innerHTML=Object.entries(LOTS).map(([k,l])=>`<option value="${k}">${l.name} · ${l.proc[0].toUpperCase()+l.proc.slice(1)}</option>`).join('')+'<option value="custom">ล็อตใหม่ (ป้อนเอง)</option>';
+$('brew').innerHTML=BREW.map(b=>`<button data-b="${b.id}" aria-pressed="false">${b.th}</button>`).join('');
+$('lvSeg').innerHTML=LEVELS.map(l=>`<button data-l="${l.id}" aria-pressed="false">${l.th}</button>`).join('');
+function syncInputs(){
+  $('lotSel').value=INP.lot; $('inM').value=INP.m.toFixed(1); $('inD').value=INP.d; $('inP').value=INP.proc; $('inS').value=INP.screen;
+  $('bVal').textContent=INP.batch.toFixed(1)+' kg'; setRange($('agR'),INP.ag); $('agO').textContent=INP.ag; $('agMark').style.left=((INP.ag-35)/50*100)+'%';
+  $('endSel').value=INP.end;
+  document.querySelectorAll('#brew button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.b===INP.brew));
+  const lv=levelOf(INP.ag); document.querySelectorAll('#lvSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lv));
+}
+function inputsChanged(){ if(S.state!=='ROASTING'&&S.state!=='COOLING') S.plan=computePlan(INP); renderPlan(); chartDirty=true; }
+$('lotSel').onchange=e=>{INP.lot=e.target.value; const l=LOTS[INP.lot]; if(l){INP.m=l.m;INP.d=l.d;INP.proc=l.proc;INP.screen=l.screen;} syncInputs(); inputsChanged(); renderLotVar();};
+$('inM').onchange=e=>{INP.m=clamp(+e.target.value||10.5,8,14);syncInputs();inputsChanged();};
+$('inD').onchange=e=>{INP.d=clamp(+e.target.value||720,600,850);syncInputs();inputsChanged();};
+$('inP').onchange=e=>{INP.proc=e.target.value;inputsChanged();};
+$('inS').onchange=e=>{INP.screen=e.target.value;inputsChanged();};
+$('bMinus').onclick=()=>{INP.batch=clamp(INP.batch-0.5,1,6);syncInputs();inputsChanged();};
+$('bPlus').onclick=()=>{INP.batch=clamp(INP.batch+0.5,1,6);syncInputs();inputsChanged();};
+$('brew').onclick=e=>{const b=e.target.closest('button');if(!b)return;const br=BREW.find(x=>x.id===b.dataset.b);INP.brew=br.id;INP.ag=LEVELS.find(l=>l.id===br.lv).ag;syncInputs();inputsChanged();};
+$('lvSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;INP.ag=LEVELS.find(l=>l.id===b.dataset.l).ag;syncInputs();inputsChanged();};
+$('agR').oninput=e=>{INP.ag=+e.target.value;syncInputs();inputsChanged();};
+$('endSel').onchange=e=>{INP.end=e.target.value;if(S.state==='ROASTING')S.plan.end=INP.end;inputsChanged();log('info','เงื่อนไขปล่อยเมล็ด: '+e.target.selectedOptions[0].text,'');};
+function renderPlan(){
+  const next=computePlan(INP), cur=S.plan, lock=S.state==='ROASTING'||S.state==='COOLING';
+  const P=lock?next:cur;
+  $('pFC').innerHTML=P.fc.toFixed(1)+'<small>°C</small>'; $('pFCs').textContent='≈ '+fmtS(P.fcTime)+' นาที';
+  $('pCh').innerHTML=P.chargeET.toFixed(0)+'<small>°C</small>'; $('pDrop').innerHTML=P.drop.toFixed(1)+'<small>°C</small>';
+  $('pTime').innerHTML=fmtS(P.time); $('pTimeS').textContent=LEVEL_TH[P.level]+' · Agtron '+P.ag;
+  $('pDtr').innerHTML=P.dtr.toFixed(1)+'<small>%</small>'; $('pCap').innerHTML=P.cap.toFixed(0)+'<small>°C</small>';
+  $('planState').innerHTML=lock?'แผนนี้จะใช้กับ<b> แบทช์ถัดไป</b> · แบทช์ปัจจุบันใช้ FC '+cur.fc.toFixed(1)+' °C':'แผนนี้จะใช้เมื่อกด<b> ใส่เมล็ด</b>';
+  const i=INP,w=[];
+  const dm=i.m-10.5; w.push(['var(--dry)',`ความชื้น ${i.m.toFixed(1)}% ${Math.abs(dm)<0.3?'อยู่ในเกณฑ์ปกติ':dm>0?'สูงกว่าปกติ ต้องอบแห้งนานขึ้น '+(dm*12).toFixed(0)+' วินาที และจุดแตกเลื่อนขึ้น '+(dm*1.2).toFixed(1)+' °C':'ต่ำกว่าปกติ เมล็ดแห้งเร็ว ลดอุณหภูมิใส่เมล็ด '+Math.abs(dm*2.5).toFixed(1)+' °C'}`]);
+  const dd=i.d-720; w.push(['var(--mai)',`ความหนาแน่น ${i.d} g/L ${Math.abs(dd)<15?'ปานกลาง':dd>0?'เมล็ดแน่น รับความร้อนช้า เพิ่มอุณหภูมิใส่เมล็ด '+(dd*0.12).toFixed(1)+' °C':'เมล็ดเบา รับความร้อนเร็ว ลดอุณหภูมิใส่เมล็ด '+Math.abs(dd*0.12).toFixed(1)+' °C'}`]);
+  if(i.proc!=='washed') w.push(['var(--warn)',`${i.proc==='natural'?'Natural':'Honey'} มีน้ำตาลที่ผิวมาก จุดแตกเร็วขึ้น ${Math.abs(PROC_OFF[i.proc]).toFixed(1)} °C และไหม้ผิวง่าย ลดแก๊สช่วงท้าย`]);
+  w.push(['var(--ac)',P.learnN?`ปรับจากจุดแตกที่วัดได้จริง ${P.learnN} แบทช์ของล็อตนี้ ${sgn(P.learnV)} °C`:'ยังไม่มีประวัติของล็อตนี้ ใช้ค่าจากโมเดล ระบบจะเรียนรู้หลังแบทช์แรก']);
+  w.push(['var(--ror)',`อุณหภูมิห้อง ${AMB.t} °C ความชื้น ${AMB.rh}% จากเซนเซอร์ ชดเชยอุณหภูมิใส่เมล็ด ${sgn((28-AMB.t)*0.2)} °C`]);
+  if(i.batch!==5) w.push(['var(--brass)',`น้ำหนัก ${i.batch.toFixed(1)} kg ${i.batch>5?'มากกว่า':'น้อยกว่า'}พิกัด ปรับแก๊สเริ่มต้นเป็น ${P.chargeGas.toFixed(0)}%`]);
+  $('why').innerHTML=w.map(x=>`<li style="--c:${x[0]}">${x[1]}</li>`).join('');
+  $('profName').textContent=(LOTS[S.plan.lot]?LOTS[S.plan.lot].short:'Custom')+' · '+LEVEL_TH[S.plan.level]+' · Agtron '+S.plan.ag;
+}
+function renderLotVar(){
+  const pos=v=>clamp((v-190)/12*100,0,100);
+  $('lotVar').innerHTML=Object.entries(LOTS).map(([k,l])=>{const mdl=fcModel(l);const L=learned(k);const act=L.n?mdl+L.v:null;
+    return `<div class="lv"><span>${l.short}</span><div class="tr"><i class="m" style="left:${pos(mdl)}%" title="โมเดล ${mdl.toFixed(1)} °C"></i>${act!=null?`<i class="a" style="left:${pos(act)}%" title="วัดจริง ${act.toFixed(1)} °C"></i>`:''}</div></div>`;}).join('');
+}
+
+/* ================= FC PANEL ================= */
+const CH=[{k:'ac',nm:'เสียงแตก (Acoustic)',sub:'≥3 ครั้งใน 15 s',c:'var(--ac)',w:50,sw:true},{k:'bt',nm:'อุณหภูมิ BT ใกล้จุดคาดการณ์',sub:'หน้าต่าง ±5 °C',c:'var(--bt)',w:20,sw:false},{k:'voc',nm:'สารระเหย VOC ในท่อ',sub:'ค่าขึ้นก่อนแตก',c:'var(--voc)',w:18,sw:true},{k:'ror',nm:'RoR ตกผิดปกติ',sub:'ไอน้ำระเหยตอนแตก',c:'var(--ror)',w:12,sw:false}];
+$('chans').innerHTML=CH.map(c=>`<div class="ch" id="ch_${c.k}" style="--c:${c.c}"><div class="chrow">${c.sw?`<button class="sw" role="switch" aria-checked="true" data-s="${c.k}" aria-label="เปิดปิด ${c.nm}"></button>`:'<button class="sw" role="switch" aria-checked="true" disabled aria-label="ใช้งานตลอด"></button>'}<div class="nm">${c.nm}<small>น้ำหนัก ${c.w}% · ${c.sub}</small></div></div><span></span><span class="w" id="chv_${c.k}">0%</span><div class="meter"><i id="chm_${c.k}"></i></div></div>`).join('')+
+ `<div class="ch" id="ch_nir" style="--c:#b8864f"><div class="chrow"><button class="sw" role="switch" aria-checked="true" data-s="nir" aria-label="เปิดปิดเซนเซอร์สี"></button><div class="nm">เซนเซอร์สี NIR<small>ใช้กับเงื่อนไขปล่อยเมล็ด ไม่ใช้ตัดสินจุดแตก</small></div></div><span></span><span class="w" id="chv_nir">—</span></div>`;
+$('chans').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;const k=b.dataset.s;SENS[k]=!SENS[k];b.setAttribute('aria-checked',SENS[k]);
+  const nm={ac:'เซนเซอร์เสียง',voc:'เซนเซอร์ VOC',nir:'เซนเซอร์สี NIR'}[k]; log('info',(SENS[k]?'เปิด ':'ปิด ')+nm,SENS[k]?'':'ทดสอบโหมดสำรอง');});
+function updateFC(){
+  const roasting=S.state==='ROASTING';
+  CH.forEach(c=>{const v=roasting||S.fcT!=null?S.sc[c.k]:0;const on=c.k==='bt'||c.k==='ror'||SENS[c.k];$('ch_'+c.k).classList.toggle('off',!on);$('chm_'+c.k).style.width=(on?v*100:0)+'%';$('chv_'+c.k).textContent=on?Math.round(v*100)+'%':'OFF';});
+  $('ch_nir').classList.toggle('off',!SENS.nir); $('chv_nir').textContent=!SENS.nir?'OFF':(S.color!=null&&S.color<=120?S.color.toFixed(0):'—');
+  const conf=S.fcT!=null?1:(roasting?S.conf:0);
+  $('confArc').setAttribute('stroke-dasharray',(conf*264).toFixed(1)+' 264'); $('confTxt').textContent=Math.round(conf*100)+'%';
+  $('confArc').style.stroke=S.fcT!=null?'var(--ok)':'var(--ac)';
+  const P=S.plan;
+  if(S.fcT!=null){ const d=S.fcBT-P.fc; $('confT').textContent='ยืนยันจุดแตกแล้ว · '+fmtS(S.fcT)+' นาที';
+    $('confD').textContent=`BT ${S.fcBT.toFixed(1)} °C โดย ${S.fcSrc} ต่างจากที่คาดการณ์ ${sgn(d)} °C ถ้าใช้ค่าตายตัว 196 °C จะคลาด ${sgn(S.fcBT-196)} °C`; }
+  else if(roasting&&S.deT!=null){ $('confT').textContent=S.conf>0.3?'กำลังยืนยันจุดแตก…':'ช่วงเมลลาร์ด · กำลังฟัง'; $('confD').textContent=`ประกาศจุดแตกเมื่อความมั่นใจรวม ≥ 72% และได้ยินเสียงแตก ≥ 3 ครั้งใน 15 วินาที ตอนนี้ได้ยิน ${S.cnt} ครั้ง คาดว่าจะแตกราว ${P.fc.toFixed(1)} °C`; }
+  else { $('confT').textContent=roasting?'ช่วงอบแห้ง · ยังไม่เริ่มตรวจจับ':'รอเริ่มคั่ว'; $('confD').textContent='ระบบเริ่มประเมินจุดแตกหลังสิ้นสุดช่วงอบแห้ง (BT 150 °C) เพื่อตัดเสียงกระแทกของเมล็ดดิบช่วงต้นออก'; }
+  const tot=S.pops.length,rate=S.pops.filter(p=>p.t>S.t-60).length;
+  $('acWin').textContent=roasting?S.cnt:'—'; $('acTot').textContent=S.pops.filter(p=>p.real).length+(S.pops.some(p=>!p.real)?' (+'+S.pops.filter(p=>!p.real).length+' หลอก)':''); $('acRate').textContent=roasting?rate:'—';
+  $('scopeSt').textContent=!SENS.ac?'SENSOR OFF':roasting?(S.cnt>=3?'CRACKING':'LISTENING'):'IDLE';
+}
+// scope
+const scope=$('scope'),sx=scope.getContext('2d'); const AB=new Float32Array(420); let abI=0; let pending=[];
+function drawScope(){
+  const dpr=Math.min(devicePixelRatio||1,2),w=scope.clientWidth,h=scope.clientHeight;
+  if(scope.width!==Math.round(w*dpr)){scope.width=Math.round(w*dpr);scope.height=Math.round(h*dpr);}
+  sx.setTransform(dpr,0,0,dpr,0,0);
+  const running=S.state==='ROASTING'&&SENS.ac;
+  const n=3;
+  for(let j=0;j<n;j++){ let v=0; if(running){ v=0.05+0.03*Math.sin(performance.now()/90+j)+Math.random()*0.05*(S.rpm/58); }
+    if(pending.length){ const p=pending[0]; v=Math.max(v,p.a*p.e*(Math.random()*.4+.6)); p.e*=0.55; if(p.e<0.05) pending.shift(); }
+    AB[abI]=v; abI=(abI+1)%AB.length; }
+  while(popQ.length){ const a=popQ.shift(); if(SENS.ac) pending.push({a,e:1}); }
+  sx.clearRect(0,0,w,h); const mid=h/2+8;
+  sx.strokeStyle='rgba(255,255,255,.05)'; sx.lineWidth=1; for(let i=1;i<6;i++){const x=Math.round(i*w/6)+.5;sx.beginPath();sx.moveTo(x,24);sx.lineTo(x,h);sx.stroke();}
+  sx.strokeStyle='rgba(181,140,240,.35)'; sx.setLineDash([3,4]); const th=0.4*(h/2-14); [mid-th,mid+th].forEach(y=>{sx.beginPath();sx.moveTo(0,y);sx.lineTo(w,y);sx.stroke();}); sx.setLineDash([]);
+  sx.fillStyle='rgba(181,140,240,.6)'; sx.font='10px "JetBrains Mono",monospace'; sx.fillText('threshold',6,mid-th-4);
+  const L=AB.length, bw=w/L; sx.fillStyle=C.ac||'#B58CF0';
+  for(let i=0;i<L;i++){ const v=AB[(abI+i)%L]; const hh=Math.max(1,v*(h/2-14)); sx.globalAlpha=v>0.4?1:0.55; sx.fillRect(i*bw,mid-hh,Math.max(1,bw-0.3),hh*2); }
+  sx.globalAlpha=1;
+}
+
+/* ================= FLOW ================= */
+const FLOW=[
+ {c:'01 · CHARGE',b:'ใส่เมล็ด',s:'ET ถึงอุณหภูมิใส่เมล็ดตามแผน โหลดเซลล์ยืนยันน้ำหนัก'},
+ {c:'02 · TURNING POINT',b:'จุดกลับตัว',s:'BT ต่ำสุดแล้วเริ่มขึ้น เริ่มคำนวณ RoR และเปิด PID'},
+ {c:'03 · DRY END',b:'สิ้นสุดอบแห้ง',s:'BT 150 °C หรือสี NIR เริ่มเหลือง ลมดูดเพิ่มเป็น 50%'},
+ {c:'04 · FIRST CRACK',b:'ยืนยันจุดแตก',s:'เสียงแตก ≥3 ครั้ง/15 s + BT + VOC + RoR รวม ≥ 72%'},
+ {c:'05 · DEVELOPMENT',b:'ช่วงพัฒนา',s:'นับ DTR ประคอง RoR ไม่ให้ดิ่ง ลมดูด 65%'},
+ {c:'06 · DROP',b:'ปล่อยเมล็ด',s:'สี NIR ถึงเป้า และ DTR ใกล้เป้า หรือถึงเพดาน BT'},
+ {c:'07 · COOL',b:'ระบายความร้อน',s:'ใบกวนและพัดลมจนต่ำกว่า 35 °C บันทึกผลและเรียนรู้'}
+];
+$('flow').innerHTML=FLOW.map((f,i)=>`<div class="fs" id="fs${i}"><span class="c">${f.c}</span><b>${f.b}</b><span>${f.s}</span></div>`).join('');
+function flowIdx(){ const st=S.state; if(st==='COOLING'||st==='DONE') return st==='DONE'?7:6; if(st!=='ROASTING') return st==='READY'?0:-1;
+  if(!S.tp) return 1; if(S.deT==null) return 2; if(S.fcT==null) return 3; return 4; }
+function updateFlow(){ const k=flowIdx(); FLOW.forEach((f,i)=>{const el=$('fs'+i);el.classList.toggle('done',i<k);el.classList.toggle('now',i===k);}); }
+
+/* ================= CHART ================= */
+const chart=$('chart'),cx=chart.getContext('2d');let chartDirty=true,hoverT=null;const show={bt:true,et:true,ror:true,ref:true,gas:true,pop:true};
+const C={};function readColors(){['bt','et','ror','gas','ref','line','line2','muted','dim','text','dry','mai','dev','brass','panel','ac','ok'].forEach(k=>C[k]=css('--'+k));}
+readColors();
+document.querySelectorAll('#legend .lg').forEach(b=>b.onclick=()=>{const k=b.dataset.k;show[k]=!show[k];b.setAttribute('aria-pressed',show[k]);chartDirty=true;});
+let chartGeom={pl:46,W:1,xMax:720};
+function drawChart(){
+  const dpr=Math.min(devicePixelRatio||1,2),w=chart.clientWidth,h=chart.clientHeight;
+  if(chart.width!==Math.round(w*dpr)||chart.height!==Math.round(h*dpr)){chart.width=Math.round(w*dpr);chart.height=Math.round(h*dpr);}
+  cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);
+  const P=S.plan,R=S.rec,narrow=w<560;
+  const pl=narrow?34:46,pr=narrow?34:46,pt=34,pb=26,W=w-pl-pr,H=h-pt-pb;
+  const lastT=R.length?R[R.length-1].t:0;const xMax=Math.ceil(Math.max(P.time+90,lastT+45)/60)*60;
+  const X=t=>pl+t/xMax*W,Y=v=>pt+(1-v/300)*H,YR=v=>pt+(1-v/30)*H,YG=g=>pt+H-g/100*H*0.2;
+  cx.font='10.5px "JetBrains Mono",monospace';cx.textBaseline='middle';
+  cx.lineWidth=1;
+  for(let v=0;v<=300;v+=50){const y=Math.round(Y(v))+.5;cx.strokeStyle=C.line;cx.beginPath();cx.moveTo(pl,y);cx.lineTo(pl+W,y);cx.stroke();cx.fillStyle=C.muted;cx.textAlign='right';cx.fillText(v,pl-6,y);cx.textAlign='left';cx.fillStyle=C.ror;cx.fillText(v/10,pl+W+6,y);}
+  cx.textAlign='center';cx.fillStyle=C.muted;const step=xMax>900?120:60;
+  for(let t=0;t<=xMax;t+=step){const x=Math.round(X(t))+.5;cx.strokeStyle=C.line;cx.beginPath();cx.moveTo(x,pt);cx.lineTo(x,pt+H);cx.stroke();cx.fillText(t/60,x,pt+H+13);}
+  cx.textAlign='left';cx.fillStyle=C.dim;cx.fillText('°C',pl-(narrow?30:40),pt-14);cx.textAlign='right';cx.fillStyle=C.ror;cx.fillText('RoR',pl+W+pr-2,pt-14);cx.fillStyle=C.dim;cx.fillText('นาที',pl+W,pt+H+13);
+  // predicted FC band
+  const fy1=Y(P.fc+2),fy2=Y(P.fc-2);cx.fillStyle=C.ac;cx.globalAlpha=.08;cx.fillRect(pl,fy1,W,fy2-fy1);cx.globalAlpha=.6;cx.setLineDash([2,4]);cx.strokeStyle=C.ac;cx.beginPath();cx.moveTo(pl,Y(P.fc));cx.lineTo(pl+W,Y(P.fc));cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;
+  cx.textAlign='left';cx.fillStyle=C.ac;cx.fillText('FC คาดการณ์ '+P.fc.toFixed(1)+' °C',pl+6,fy1-7);
+  if(R.length){const end=S.dropT!=null?S.dropT:lastT;[[0,S.deT!=null?S.deT:end,C.dry],[S.deT,S.fcT!=null?S.fcT:end,C.mai],[S.fcT,end,C.dev]].forEach(s=>{if(s[0]==null)return;cx.fillStyle=s[2];cx.fillRect(X(s[0]),pt-8,Math.max(0,X(s[1])-X(s[0])),4);});}
+  if(show.ref){cx.strokeStyle=C.ref;cx.setLineDash([5,5]);cx.lineWidth=1.3;cx.globalAlpha=.8;cx.beginPath();for(let t=90;t<=P.time;t+=5){const v=refBT(t,P);t===90?cx.moveTo(X(t),Y(v)):cx.lineTo(X(t),Y(v));}cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;}
+  if(R.length>1){
+    if(show.gas){cx.beginPath();cx.moveTo(X(R[0].t),YG(0));R.forEach(r=>cx.lineTo(X(r.t),YG(r.gas)));cx.lineTo(X(lastT),YG(0));cx.closePath();cx.fillStyle=C.gas;cx.globalAlpha=.2;cx.fill();cx.globalAlpha=1;
+      cx.strokeStyle=C.gas;cx.lineWidth=1.2;cx.beginPath();R.forEach((r,i)=>i?cx.lineTo(X(r.t),YG(r.gas)):cx.moveTo(X(r.t),YG(r.gas)));cx.stroke();}
+    const line=(k,col,lw,sc)=>{cx.strokeStyle=col;cx.lineWidth=lw;cx.lineJoin='round';cx.beginPath();let on=false;R.forEach(r=>{const v=r[k];if(v==null){on=false;return;}const y=sc(v);on?cx.lineTo(X(r.t),y):cx.moveTo(X(r.t),y);on=true;});cx.stroke();};
+    if(show.ror){cx.save();cx.beginPath();cx.rect(pl,pt,W,H);cx.clip();line('ror',C.ror,1.5,v=>YR(clamp(v,-2,30)));cx.restore();}
+    if(show.et) line('et',C.et,1.8,Y);
+    if(show.bt){const g=cx.createLinearGradient(0,pt,0,pt+H);g.addColorStop(0,'rgba(240,138,62,.18)');g.addColorStop(1,'rgba(240,138,62,0)');
+      cx.beginPath();cx.moveTo(X(R[0].t),Y(0));R.forEach(r=>cx.lineTo(X(r.t),Y(r.bt)));cx.lineTo(X(lastT),Y(0));cx.closePath();cx.fillStyle=g;cx.fill();line('bt',C.bt,2.6,Y);
+      const lr=R[R.length-1];if(S.state==='ROASTING'){cx.fillStyle=C.bt;cx.globalAlpha=.25;cx.beginPath();cx.arc(X(lr.t),Y(lr.bt),8,0,7);cx.fill();cx.globalAlpha=1;cx.beginPath();cx.arc(X(lr.t),Y(lr.bt),3.5,0,7);cx.fill();}}
+  }
+  if(show.pop&&S.pops.length){S.pops.forEach(p=>{const x=X(p.t);cx.fillStyle=p.real?C.ac:C.dim;cx.fillRect(Math.round(x),pt+H-(p.real?12:6),1.5,p.real?12:6);});}
+  const ev=[];if(S.tp)ev.push(['TP',S.tp.t,S.tp.bt,C.ror]);if(S.deT!=null)ev.push(['DE',S.deT,150,C.dry]);if(S.fcT!=null)ev.push(['FC',S.fcT,S.fcBT,C.ac]);if(S.dropT!=null)ev.push(['DROP',S.dropT,S.dropBT,C.brass]);
+  ev.forEach(e=>{const x=X(e[1]),y=Y(e[2]);cx.strokeStyle=e[3];cx.globalAlpha=.55;cx.setLineDash([2,3]);cx.beginPath();cx.moveTo(x,pt);cx.lineTo(x,pt+H);cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;
+    cx.fillStyle=e[3];cx.beginPath();cx.arc(x,y,4,0,7);cx.fill();cx.fillStyle=C.panel;cx.beginPath();cx.arc(x,y,1.8,0,7);cx.fill();
+    const lb=`${e[0]} ${fmtS(e[1])} · ${e[2].toFixed(0)}°`;cx.font='600 10.5px "JetBrains Mono",monospace';const tw=cx.measureText(lb).width+10;const lx=clamp(x-tw/2,pl,pl+W-tw);const ly=y-24<pt?y+12:y-24;
+    cx.fillStyle='rgba(14,17,20,.92)';cx.fillRect(lx,ly,tw,16);cx.strokeStyle=e[3];cx.strokeRect(lx+.5,ly+.5,tw-1,15);cx.fillStyle=e[3];cx.textAlign='left';cx.fillText(lb,lx+5,ly+8.5);cx.font='10.5px "JetBrains Mono",monospace';});
+  const tip=$('ctip');
+  if(hoverT!=null&&R.length){const r=R[clamp(Math.round(hoverT)-R[0].t,0,R.length-1)];const x=X(r.t);cx.strokeStyle=C.text;cx.globalAlpha=.35;cx.beginPath();cx.moveTo(x,pt);cx.lineTo(x,pt+H);cx.stroke();cx.globalAlpha=1;
+    cx.fillStyle=C.bt;cx.beginPath();cx.arc(x,Y(r.bt),4,0,7);cx.fill();
+    tip.hidden=false;tip.innerHTML=`<b>${fmtS(r.t)}</b><br><span style="color:var(--bt)">BT ${r.bt.toFixed(1)} °C</span><br><span style="color:var(--et)">ET ${r.et.toFixed(1)} °C</span><br><span style="color:var(--ror)">RoR ${r.ror==null?'—':r.ror.toFixed(1)}</span><br><span style="color:var(--gas)">แก๊ส ${r.gas.toFixed(0)} %</span><br><span style="color:var(--ac)">FC conf ${Math.round(r.conf*100)} %</span>${r.ag!=null&&r.ag<=120?`<br><span style="color:#c9955a">Agtron ${r.ag.toFixed(1)}</span>`:''}`;
+    const tx=x+14+160>w?x-172:x+14;tip.style.left=(tx+8)+'px';tip.style.top=(pt+10)+'px';
+  } else tip.hidden=true;
+  chartGeom={pl,W,xMax};
+}
+chart.addEventListener('pointermove',e=>{const r=chart.getBoundingClientRect();const t=(e.clientX-r.left-chartGeom.pl)/chartGeom.W*chartGeom.xMax;const last=S.rec.length?S.rec[S.rec.length-1].t:0;hoverT=(t>=0&&t<=last+2&&S.rec.length)?t:null;chartDirty=true;});
+chart.addEventListener('pointerleave',()=>{hoverT=null;chartDirty=true;});
+new ResizeObserver(()=>{chartDirty=true;}).observe(chart);
+
+/* ================= STATIC ================= */
+$('tiers').innerHTML=TIERS.map(t=>`<div class="card tier" style="--c:${t.c}"><div class="tier-h"><span class="lvl">${t.lvl}</span><b>${t.title}</b><span>${t.sub}</span></div>${t.items.map(i=>`<div class="eq"><div class="nm"><b>${i[0]}</b><code>${i[1]}</code></div><p>${i[2]}</p><dl><dt>ติดตั้ง</dt><dd>${i[3]}</dd><dt>ต่อเข้า</dt><dd>${i[4]}</dd></dl><span class="gain">→ ${i[5]}</span></div>`).join('')}</div>`).join('');
+$('inputs').innerHTML=OP_INPUTS.map(i=>`<div class="inp"><span class="${i[0]}">${i[0]==='req'?'ต้องป้อน':'ไม่บังคับ'}</span><b>${i[1]}</b><span>${i[2]}</span></div>`).join('');
+$('comps').innerHTML=COMPONENTS.map(c=>`<article class="comp"><div class="top-row"><div><h3>${c.th}</h3><div class="en">${c.en}</div></div><span class="tag ${c.cls}">${c.isNew?'NEW · ':''}${c.tag}</span></div><p>${c.desc}</p><dl>${c.specs.map(s=>`<dt>${s[0]}</dt><dd>${s[1]}</dd>`).join('')}</dl><button class="btn-sm go" data-go="${c.id}">ดูในโมเดล 3D →</button></article>`).join('');
+$('specBody').innerHTML=SPECS.map(s=>s[0]==='grp'?`<tr class="grp"><th colspan="2">${s[1]}</th></tr>`:`<tr><th>${s[0]}</th><td>${s[1]}</td></tr>`).join('');
+$('ilk').innerHTML=INTERLOCKS.map(i=>`<li><span class="code">${i[0]}</span><b>${i[1]}</b><span>${i[2]}</span></li>`).join('');
+(function arch(){
+  const ins=[['BT Thermocouple','AI-01 · K-type',0],['ET / Inlet Thermocouple','AI-02/03 · K-type',0],['Acoustic edge node','Modbus RTU · count/s',1],['NIR Color sensor','RS-485 · Agtron',1],['Load cells ×3','AI-04 · weighing',1],['VOC exhaust sensor','AI-05 · 4–20 mA',1],['Gas P / Air ΔP','AI-06 · 4–20 mA',1],['UV Flame / ΔP switch','DI-01/02',0],['Door, Gate, E-stop','DI-03…06 · Safety',0]];
+  const outs=[['วาล์วแก๊ส Modulating','AO-01 · 0–10 V'],['SSOV ×2 + Igniter','DO-01…03'],['VFD ถังคั่ว','AO-02 · Modbus'],['VFD พัดลมดูด','AO-03 · Modbus'],['กระบอกลมประตูปล่อย','DO-04 · auto drop'],['พัดลม + ใบกวนถาดเย็น','DO-05/06'],['Hopper gate','DO-07 · pneumatic']];
+  let a='',b='';
+  ins.forEach((s,i)=>{const y=36+i*42,cy=y+16;a+=`<rect class="bx${s[2]?' nw':''}" x="20" y="${y}" width="220" height="32" rx="5"/><text class="t1" x="32" y="${y+14}">${s[0]}</text><text class="t2" x="32" y="${y+27}">${s[1]}</text>${s[2]?`<text class="t4" x="206" y="${y+13}">NEW</text>`:''}<path class="ln ${s[2]?'nw':'sig'}${i===2?' flowa':''}" d="M240 ${cy} C 300 ${cy}, 295 ${160+i*15}, 355 ${160+i*15}"/>`;});
+  outs.forEach((s,i)=>{const y=36+i*54;b+=`<rect class="bx" x="720" y="${y}" width="220" height="36" rx="5"/><text class="t1" x="734" y="${y+15}">${s[0]}</text><text class="t2" x="734" y="${y+29}">${s[1]}</text><path class="ln out${i===0?' flowa':''}" d="M605 ${160+i*20} C 665 ${160+i*20}, 660 ${y+18}, 720 ${y+18}"/>`;});
+  $('archIn').innerHTML=a;$('archOut').innerHTML=b;
+})();
+
+/* ================= 3D ================= */
+let selId=null;
+function liveFor(id){
+  switch(id){
+    case 'hopper':return S.state==='READY'||S.state==='PREHEAT'?`บรรจุเมล็ดดิบ ${INP.batch.toFixed(1)} kg · ประตูปิด`:S.charged?'ว่าง · ปล่อยเมล็ดเข้าถังแล้ว':'ว่าง';
+    case 'loadcell':return S.state==='READY'||S.state==='PREHEAT'?`น้ำหนักในถังรับ ${INP.batch.toFixed(3)} kg`:S.lossFinal!=null&&S.dropT!=null?`เข้า ${S.plan.batch.toFixed(2)} → ออก ${(S.plan.batch*(1-S.lossFinal/100)).toFixed(2)} kg`:'0.000 kg';
+    case 'drum':return `${S.state==='ESTOP'?0:S.rpm} rpm · ${S.charged?'มีเมล็ด '+S.plan.batch.toFixed(1)+' kg':'ถังว่าง'}`;
+    case 'burner':return S.gas>1?`เปิดวาล์ว ${S.gas.toFixed(0)} % · ≈ ${(S.gas/100*18).toFixed(1)} kW`:'ปิดหัวเผา';
+    case 'probes':return `BT ${S.probe.toFixed(1)} °C · ET ${S.et.toFixed(1)} °C`;
+    case 'acoustic':return !SENS.ac?'ปิดใช้งาน':S.state==='ROASTING'?`ได้ยิน ${S.cnt} ครั้งใน 15 s · ความมั่นใจ ${Math.round(S.conf*100)} %`:'สแตนด์บาย';
+    case 'nir':return !SENS.nir?'ปิดใช้งาน':S.color!=null&&S.color<=120?`Agtron ${S.color.toFixed(1)} · เป้า ${S.plan.ag}`:'รอเมล็ดเปลี่ยนสี';
+    case 'door':return S.state==='COOLING'&&S.dropAnim<1?'ประตูเปิด · กำลังปล่อยเมล็ด':'ประตูปิด · ล็อก';
+    case 'cooling':return S.state==='COOLING'||S.state==='DONE'?`ใบกวนหมุน · เมล็ด ${S.trayT.toFixed(0)} °C`:'ถาดว่าง · รอเมล็ด';
+    case 'cyclone':return `ลมดูด ${S.air.toFixed(0)} % · VOC ${SENS.voc?Math.round(S.voc*100)+' %':'OFF'}`;
+    case 'panel':return `โหมด ${S.auto?'AUTO':'MANUAL'} · ${STATE_TH[S.state]}`;
+    case 'housing':return `ผิวนอกประมาณ ${(28+(S.et-28)*0.14).toFixed(0)} °C`;
+    case 'base':return S.state==='COOLING'?'พัดลมถาดเย็นทำงาน':'พัดลมถาดเย็นหยุด';
+  }return '';
+}
+$('chips').innerHTML=COMPONENTS.map(c=>`<button class="chip${c.isNew?' new':''}" data-id="${c.id}">${c.th}</button>`).join('');
+let three=null;
+try{ if(!window.THREE) throw new Error('three'); three=init3D(); }catch(err){ console.error(err); $('vp').insertAdjacentHTML('beforeend','<div class="nogl">ไม่สามารถแสดงโมเดล 3 มิติบนอุปกรณ์นี้ได้<br>ส่วนควบคุมและกราฟยังทำงานตามปกติ</div>'); }
+function select(id,fly){
+  selId=id;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.id===id));
+  const info=$('info'); if(!id){info.hidden=true;return;}
+  const c=COMPONENTS.find(x=>x.id===id);
+  info.hidden=false;info.innerHTML=`<button class="x" aria-label="ปิด" id="infoX">×</button><div class="en">${c.en.toUpperCase()}</div><h3>${c.th}</h3><p>${c.desc}</p><dl>${c.specs.map(s=>`<dt>${s[0]}</dt><dd>${s[1]}</dd>`).join('')}</dl><div class="live" id="infoLive">${liveFor(id)}</div>`;
+  $('infoX').onclick=()=>select(null);
+  if(three&&fly) three.focus(id);
+}
+$('chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)select(selId===b.dataset.id?null:b.dataset.id,true);});
+$('comps').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;$('vp').scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});select(b.dataset.go,true);});
+
+function init3D(){
+  const T=THREE,canvas=$('gl'),vp=$('vp');
+  const renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=T.sRGBEncoding;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+  const scene=new T.Scene();
+  const camera=new T.PerspectiveCamera(34,1,0.05,50);
+  const HOME={pos:new T.Vector3(3.1,2.35,3.9),tgt:new T.Vector3(-0.05,1.1,0.1)};
+  camera.position.copy(HOME.pos);
+  const controls=new T.OrbitControls(camera,canvas);controls.target.copy(HOME.tgt);controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=1.1;controls.maxDistance=8;controls.maxPolarAngle=Math.PI*0.52;controls.autoRotateSpeed=0.8;controls.update();
+  const ec=document.createElement('canvas');ec.width=1024;ec.height=512;const eg=ec.getContext('2d');
+  const gr=eg.createLinearGradient(0,0,0,512);gr.addColorStop(0,'#dfe5ec');gr.addColorStop(.42,'#6c737c');gr.addColorStop(.55,'#2b3036');gr.addColorStop(1,'#101215');eg.fillStyle=gr;eg.fillRect(0,0,1024,512);
+  eg.fillStyle='#ffffff';eg.fillRect(120,70,180,60);eg.fillRect(560,50,260,50);eg.fillStyle='#ffe2b0';eg.fillRect(860,120,90,110);eg.fillStyle='#9fb8d0';eg.fillRect(380,150,120,40);
+  const etex=new T.CanvasTexture(ec);etex.mapping=T.EquirectangularReflectionMapping;etex.encoding=T.sRGBEncoding;
+  const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromEquirectangular(etex).texture;
+  scene.add(new T.HemisphereLight(0xdfe6ee,0x1a1d20,0.45));
+  const key=new T.DirectionalLight(0xffffff,1.6);key.position.set(3,5,3.5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);
+  Object.assign(key.shadow.camera,{left:-2,right:2,top:3,bottom:-1,near:1,far:12});key.shadow.bias=-0.0005;scene.add(key);
+  const rim=new T.DirectionalLight(0xffd9a0,0.7);rim.position.set(-3,3,-3);scene.add(rim);
+  const floor=new T.Mesh(new T.CircleGeometry(4,64),new T.MeshStandardMaterial({color:0x14181c,roughness:.9,metalness:0}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+  const grid=new T.GridHelper(8,32,0x2a323a,0x1c2228);grid.position.y=0.001;grid.material.transparent=true;grid.material.opacity=.6;scene.add(grid);
+  const std=o=>new T.MeshStandardMaterial(o);
+  const M={
+    coat:std({color:0x262b33,roughness:.48,metalness:.5}),
+    coatH:std({color:0x262b33,roughness:.48,metalness:.5,transparent:true}),
+    brass:std({color:0xd8ad55,roughness:.2,metalness:1}),
+    brassD:std({color:0xd8ad55,roughness:.22,metalness:1,side:T.DoubleSide}),
+    brassH:std({color:0xd8ad55,roughness:.22,metalness:1,side:T.DoubleSide,transparent:true}),
+    steel:std({color:0xc4c8cd,roughness:.32,metalness:1}),
+    drum:std({color:0x9aa0a6,roughness:.45,metalness:.9,side:T.DoubleSide,emissive:0xff4a10,emissiveIntensity:0}),
+    black:std({color:0x0e1012,roughness:.6,metalness:.3}),
+    wood:std({color:0x4b2a1b,roughness:.55,metalness:0}),
+    red:std({color:0xcc2a2e,roughness:.35,metalness:.1}),
+    yellow:std({color:0xe8c330,roughness:.4}),
+    glass:std({color:0x88c4e8,roughness:.05,metalness:.1,transparent:true,opacity:.35}),
+    wire:std({color:0xe9e6df,roughness:.6}),
+    grille:std({color:0x08090a,roughness:.8}),
+    violet:std({color:0x3a2d55,roughness:.4,metalness:.4}),
+    lens:std({color:0x220808,roughness:.1,metalness:.2,emissive:0xff3a2a,emissiveIntensity:0})
+  };
+  function mk(geo,mat,x=0,y=0,z=0,parent){const m=new T.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;if(parent)parent.add(m);return m;}
+  const groups={},base={},explodeOff={
+    hopper:new T.Vector3(0,0.75,0.15),loadcell:new T.Vector3(0,0.42,0.45),housing:new T.Vector3(0,0.42,-0.1),drum:new T.Vector3(0,0,0),burner:new T.Vector3(0.95,-0.1,0.2),
+    probes:new T.Vector3(0.55,0.05,0.5),acoustic:new T.Vector3(0.55,0.1,0),nir:new T.Vector3(-0.35,0.05,0.55),door:new T.Vector3(0.1,0,0.55),cooling:new T.Vector3(0.15,-0.05,0.75),cyclone:new T.Vector3(-0.55,0,-0.35),
+    panel:new T.Vector3(-0.55,0,0.3),base:new T.Vector3(0,0,0)};
+  function grp(id,x,y,z){const g=new T.Group();g.position.set(x,y,z);g.userData.id=id;groups[id]=g;base[id]=g.position.clone();scene.add(g);return g;}
+
+  const gB=grp('base',0,0,0);
+  mk(new T.BoxGeometry(0.9,0.64,1.2),M.coat,0,0.41,0.2,gB);
+  [[-.4,-.35],[.4,-.35],[-.4,.75],[.4,.75]].forEach(p=>mk(new T.CylinderGeometry(.035,.045,.09,16),M.black,p[0],0.045,p[1],gB));
+  mk(new T.BoxGeometry(0.34,0.26,0.01),M.black,0.12,0.36,0.805,gB);
+  const vent=new T.Mesh(new T.CircleGeometry(.12,40),M.grille);vent.position.set(0.456,0.4,0.3);vent.rotation.y=Math.PI/2;gB.add(vent);
+  for(let i=0;i<6;i++) mk(new T.BoxGeometry(0.006,0.012,0.2),M.steel,0.46,0.34+i*0.024,0.3,gB);
+  mk(new T.BoxGeometry(0.1,0.02,0.02),M.steel,-0.12,0.36,0.815,gB);
+
+  const gH=grp('housing',0,1.2,-0.02);
+  const arch=new T.Shape();arch.moveTo(-.39,-.47);arch.lineTo(.39,-.47);arch.lineTo(.39,0);arch.absarc(0,0,.39,0,Math.PI,false);arch.lineTo(-.39,-.47);
+  const archGeo=new T.ExtrudeGeometry(arch,{depth:.05,bevelEnabled:true,bevelThickness:.008,bevelSize:.008,bevelSegments:2,curveSegments:48});
+  mk(archGeo,M.coatH,0,0,0.3,gH);mk(archGeo,M.coatH,0,0,-0.37,gH);
+  const shell=mk(new T.CylinderGeometry(.375,.375,.62,64,1,true,Math.PI/2-.3,Math.PI+.6),M.brassH,0,0,-0.01,gH);shell.rotation.x=Math.PI/2;
+  mk(new T.BoxGeometry(0.77,0.36,0.62),M.coatH,0,-0.28,-0.01,gH);
+  for(let i=0;i<11;i++){const a=Math.PI*i/10;mk(new T.CylinderGeometry(.009,.009,.012,10),M.steel,Math.cos(a)*.35,Math.sin(a)*.35,0.362,gH).rotation.x=Math.PI/2;}
+  const housingMats=[M.coatH,M.brassH];
+
+  const gD=grp('drum',0,1.2,-0.02);
+  const spin=new T.Group();gD.add(spin);
+  mk(new T.CylinderGeometry(.31,.31,.56,48,1,true),M.drum,0,0,0,spin).rotation.x=Math.PI/2;
+  [-.28,.28].forEach(z=>mk(new T.TorusGeometry(.31,.012,8,48),M.steel,0,0,z,spin));
+  mk(new T.CircleGeometry(.31,48),M.drum,0,0,-.28,spin);
+  for(let i=0;i<3;i++){const a=i*Math.PI*2/3;mk(new T.BoxGeometry(.012,.1,.5),M.steel,Math.cos(a)*.255,Math.sin(a)*.255,0,spin).rotation.z=a-Math.PI/2+0.35;}
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;mk(new T.BoxGeometry(.01,.3,.01),M.steel,Math.cos(a)*.15,Math.sin(a)*.15,-.27,spin).rotation.z=a-Math.PI/2;}
+  mk(new T.CylinderGeometry(.025,.025,.95,16),M.steel,0,0,-0.2,gD).rotation.x=Math.PI/2;
+  const beanGeo=new T.SphereGeometry(.011,7,5);beanGeo.scale(1.3,.85,1);
+  const beanMatDrum=std({color:0x7a8a55,roughness:.55,metalness:0});
+  const ND=340,drumBeans=new T.InstancedMesh(beanGeo,beanMatDrum,ND);drumBeans.count=0;gD.add(drumBeans);
+  const phi=-Math.PI/2-0.45,dir=[Math.cos(phi),Math.sin(phi)];const dB=[];
+  for(let i=0;i<ND;i++){ if(i<ND-60){let x,y;do{x=(Math.random()*2-1)*.285;y=(Math.random()*2-1)*.285;}while(x*x+y*y>.285*.285||x*dir[0]+y*dir[1]<0.1);dB.push({x,y,z:(Math.random()*2-1)*.25,p:Math.random()*6.28,c:false});}
+    else dB.push({z:(Math.random()*2-1)*.24,p:Math.random(),c:true});}
+  const A=[Math.cos(phi-1.25)*.26,Math.sin(phi-1.25)*.26],B=[Math.cos(phi+0.9)*.2,Math.sin(phi+0.9)*.2];
+
+  const gU=grp('burner',0,0.83,-0.02);
+  mk(new T.BoxGeometry(.13,.04,.52),M.steel,0,0,0,gU);
+  mk(new T.CylinderGeometry(.018,.018,.55,12),M.steel,-.3,0,.18,gU).rotation.z=Math.PI/2;
+  mk(new T.BoxGeometry(.06,.06,.05),M.brass,-.52,0,.18,gU);
+  const vh=mk(new T.BoxGeometry(.1,.012,.02),M.red,-.52,.04,.18,gU);
+  const flameMat=new T.MeshBasicMaterial({color:0x3f86ff,transparent:true,opacity:.8,blending:T.AdditiveBlending,depthWrite:false});
+  const flameCore=new T.MeshBasicMaterial({color:0xffa640,transparent:true,opacity:.55,blending:T.AdditiveBlending,depthWrite:false});
+  const flames=[];for(let r=0;r<2;r++)for(let i=0;i<8;i++){const f=new T.Mesh(new T.ConeGeometry(.02,.1,10,1,true),r?flameCore:flameMat);f.position.set(r?0:(i%2?.03:-.03),.07,-.22+i*.063);gU.add(f);flames.push(f);}
+  const fire=new T.PointLight(0xff8a3a,0,1.6,2);fire.position.set(0,.2,0);gU.add(fire);
+
+  const gP=grp('probes',0,0,0);
+  function probe(x,y,len){mk(new T.CylinderGeometry(.007,.007,len,10),M.steel,x,y,0.36-len/2+0.1,gP).rotation.x=Math.PI/2;mk(new T.CylinderGeometry(.018,.018,.05,14),M.steel,x,y,0.47,gP).rotation.x=Math.PI/2;mk(new T.BoxGeometry(.035,.035,.03),M.black,x,y,0.5,gP);}
+  probe(0.22,0.98,.38);probe(-0.22,1.38,.3);
+  mk(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(.22,.98,.52),new T.Vector3(.18,.9,.62),new T.Vector3(-.1,.86,.66),new T.Vector3(-.45,.95,.6),new T.Vector3(-.58,1.05,.62)]),40,.005,6,false),M.wire,0,0,0,gP);
+  mk(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.22,1.38,.52),new T.Vector3(-.36,1.3,.58),new T.Vector3(-.5,1.2,.6),new T.Vector3(-.6,1.1,.62)]),30,.005,6,false),M.wire,0,0,0,gP);
+
+  // NEW: acoustic sensor on right side of housing
+  const gA=grp('acoustic',0.395,1.12,0.05);
+  mk(new T.CylinderGeometry(.035,.035,.03,28),M.violet,0.015,0,0,gA).rotation.z=Math.PI/2;
+  mk(new T.CylinderGeometry(.028,.028,.012,28),M.steel,0.035,0,0,gA).rotation.z=Math.PI/2;
+  mk(new T.BoxGeometry(.06,.05,.04),M.black,0.03,-0.07,0.05,gA);
+  mk(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(.04,-.02,.0),new T.Vector3(.06,-.05,.04),new T.Vector3(.04,-.07,.05)]),12,.004,6,false),M.black,0,0,0,gA);
+  const ring=new T.Mesh(new T.RingGeometry(.04,.05,40),new T.MeshBasicMaterial({color:0xb58cf0,transparent:true,opacity:0,side:T.DoubleSide,blending:T.AdditiveBlending,depthWrite:false}));
+  ring.rotation.y=Math.PI/2;ring.position.x=0.045;gA.add(ring);let ringT=1;
+  // NEW: NIR color sensor at front plate
+  const gI=grp('nir',-0.2,1.04,0.37);
+  mk(new T.BoxGeometry(.09,.065,.06),M.black,0,0,0.03,gI);
+  mk(new T.BoxGeometry(.095,.01,.065),M.brass,0,.037,0.03,gI);
+  const lens=mk(new T.CylinderGeometry(.016,.016,.012,24),M.lens,0.018,0,0.065,gI);lens.rotation.x=Math.PI/2;
+  mk(new T.CylinderGeometry(.006,.006,.012,12),M.steel,-0.025,0.015,0.065,gI).rotation.x=Math.PI/2;
+  mk(new T.CylinderGeometry(.005,.005,.12,8),M.steel,-0.02,-0.03,0.0,gI).rotation.x=Math.PI/2;
+  // NEW: load cells under hopper gate
+  const gL=grp('loadcell',0.08,1.575,0.15);
+  [[-0.13,0],[0.13,0],[0,-0.12]].forEach(p=>{mk(new T.BoxGeometry(.05,.03,.03),M.steel,p[0],0,p[1],gL);mk(new T.BoxGeometry(.012,.02,.032),M.violet,p[0]+.015,.0,p[1],gL);});
+
+  const gR=grp('door',0,0,0);
+  mk(new T.CylinderGeometry(.075,.075,.05,40),M.brass,0.03,1.2,0.39,gR).rotation.x=Math.PI/2;
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;mk(new T.CylinderGeometry(.008,.008,.02,8),M.steel,0.03+Math.cos(a)*.055,1.2+Math.sin(a)*.055,0.42,gR).rotation.x=Math.PI/2;}
+  mk(new T.CylinderGeometry(.02,.02,.13,16),M.wood,-0.1,1.2,0.43,gR).rotation.z=Math.PI/2;
+  mk(new T.BoxGeometry(.04,.04,.03),M.black,-0.035,1.2,0.43,gR);
+  mk(new T.CylinderGeometry(.032,.032,.02,24),M.glass,0.2,1.36,0.37,gR).rotation.x=Math.PI/2;
+  mk(new T.TorusGeometry(.034,.006,8,24),M.brass,0.2,1.36,0.382,gR);
+  const lever=new T.Group();lever.position.set(0.12,1.16,0.4);gR.add(lever);
+  mk(new T.CylinderGeometry(.009,.009,.33,10),M.steel,.165,0,0,lever).rotation.z=Math.PI/2;
+  mk(new T.CylinderGeometry(.06,.06,.07,28),M.brass,.34,0,0,lever).rotation.x=Math.PI/2;
+  const flap=new T.Group();flap.position.set(0.03,0.99,0.36);gR.add(flap);
+  mk(new T.CylinderGeometry(.13,.13,.012,32,1,false,Math.PI/2,Math.PI),M.brass,0,0,0,flap).rotation.x=Math.PI/2;
+  const chute=new T.Group();chute.position.set(0.03,0.93,0.47);chute.rotation.x=0.55;gR.add(chute);
+  mk(new T.BoxGeometry(.26,.01,.22),M.brassD,0,0,0,chute);mk(new T.BoxGeometry(.01,.08,.22),M.brassD,-.13,.04,0,chute);mk(new T.BoxGeometry(.01,.08,.22),M.brassD,.13,.04,0,chute);
+
+  const gC=grp('cooling',0.05,0.73,0.52);
+  mk(new T.CylinderGeometry(.43,.41,.15,64,1,true),M.brassD,0,.12,0,gC);
+  mk(new T.TorusGeometry(.43,.013,10,64),M.brass,0,.195,0,gC).rotation.x=Math.PI/2;
+  mk(new T.CylinderGeometry(.41,.36,.1,48),M.coat,0,.0,0,gC);
+  const pc=document.createElement('canvas');pc.width=pc.height=512;const pg=pc.getContext('2d');pg.fillStyle='#b58f45';pg.fillRect(0,0,512,512);pg.fillStyle='#1a1407';for(let y=6;y<512;y+=13)for(let x=(y/13%2)*6.5+6;x<512;x+=13){pg.beginPath();pg.arc(x,y,3.6,0,7);pg.fill();}
+  const ptex=new T.CanvasTexture(pc);ptex.encoding=T.sRGBEncoding;ptex.anisotropy=4;
+  mk(new T.CircleGeometry(.41,64),std({map:ptex,metalness:.85,roughness:.35}),0,.052,0,gC).rotation.x=-Math.PI/2;
+  const agit=new T.Group();agit.position.y=.075;gC.add(agit);
+  mk(new T.CylinderGeometry(.035,.045,.06,24),M.brass,0,0,0,agit);mk(new T.SphereGeometry(.035,20,12,0,Math.PI*2,0,Math.PI/2),M.brass,0,.03,0,agit);
+  for(let i=0;i<4;i++){const arm=new T.Group();arm.rotation.y=i*Math.PI/2;agit.add(arm);mk(new T.BoxGeometry(.37,.016,.016),M.steel,.2,0,0,arm);for(let k=0;k<3;k++) mk(new T.BoxGeometry(.012,.04,.05),M.brass,.12+k*.1,-.01,0,arm).rotation.y=.6;}
+  mk(new T.BoxGeometry(.18,.09,.16),M.brassD,.32,.1,.3,gC).rotation.y=-0.75;
+  const gh=mk(new T.CylinderGeometry(.012,.012,.3,12),M.brass,.48,.1,.47,gC);gh.rotation.z=Math.PI/2;gh.rotation.y=-0.75;
+  const beanMatTray=std({color:0x5a3620,roughness:.5,metalness:0});
+  const NT=520,trayBeans=new T.InstancedMesh(beanGeo,beanMatTray,NT);trayBeans.count=0;trayBeans.position.y=.06;gC.add(trayBeans);
+  {const d=new T.Object3D();for(let i=0;i<NT;i++){const r=Math.sqrt(Math.random())*.38,a=Math.random()*6.283;d.position.set(Math.cos(a)*r,Math.random()*.025,Math.sin(a)*r);d.rotation.set(Math.random()*3,Math.random()*3,0);d.updateMatrix();trayBeans.setMatrixAt(i,d.matrix);}trayBeans.instanceMatrix.needsUpdate=true;}
+
+  const gY=grp('cyclone',-0.52,0,-0.42);
+  mk(new T.CylinderGeometry(.15,.15,1.28,40),M.coat,0,1.36,0,gY);
+  mk(new T.CylinderGeometry(.15,.05,.22,40),M.coat,0,.61,0,gY);
+  mk(new T.BoxGeometry(.2,.2,.2),M.coat,0,.4,0,gY);mk(new T.BoxGeometry(.08,.02,.02),M.steel,0,.4,.105,gY);
+  mk(new T.CylinderGeometry(.2,.2,.17,40),M.coat,0,2.08,0,gY);
+  mk(new T.CylinderGeometry(.21,.21,.02,40),M.black,0,2.17,0,gY);
+  mk(new T.CylinderGeometry(.1,.1,.22,32),M.steel,0,2.3,0,gY);
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;mk(new T.BoxGeometry(.012,.2,.03),M.steel,Math.cos(a)*.105,2.3,Math.sin(a)*.105,gY).rotation.y=-a;}
+  mk(new T.BoxGeometry(.08,.07,.06),M.steel,.1,2.26,.07,gY);
+  mk(new T.CylinderGeometry(.06,.06,.04,20),M.steel,0,2.43,0,gY);
+  mk(new T.CylinderGeometry(.07,.07,.34,24),M.coat,.25,1.46,.0,gY).rotation.z=Math.PI/2;
+  mk(new T.CylinderGeometry(.06,.06,.36,20),M.coat,-.22,2.25,-.02,gY);
+  mk(new T.CylinderGeometry(.065,.065,.02,20),M.black,-.22,2.43,-.02,gY);
+  mk(new T.CylinderGeometry(.06,.06,.1,20),M.coat,-.16,2.1,-.02,gY).rotation.z=Math.PI/2;
+  mk(new T.BoxGeometry(.05,.05,.04),M.violet,-.22,2.3,.045,gY); // VOC sensor on stack
+  mk(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(.1,2.22,.1),new T.Vector3(.16,2.0,.18),new T.Vector3(.2,1.8,.2),new T.Vector3(.24,1.6,.18)]),20,.012,6,false),M.black,0,0,0,gY);
+
+  const gN=grp('panel',-0.66,0,0.48);
+  mk(new T.BoxGeometry(.32,1.28,.36),M.coat,0,.71,0,gN);
+  mk(new T.BoxGeometry(.28,.56,.006),M.steel,0,1.03,.183,gN);
+  function dispCanvas(){const c=document.createElement('canvas');c.width=256;c.height=160;const t=new T.CanvasTexture(c);t.encoding=T.sRGBEncoding;return {c,g:c.getContext('2d'),t};}
+  const d1=dispCanvas(),d2=dispCanvas();
+  [[d1,-.068],[d2,.068]].forEach(([d,x])=>{mk(new T.BoxGeometry(.112,.078,.012),M.black,x,1.22,.188,gN);const p=new T.Mesh(new T.PlaneGeometry(.1,.0625),new T.MeshBasicMaterial({map:d.t,toneMapped:false}));p.position.set(x,1.22,.195);gN.add(p);});
+  for(let i=0;i<3;i++){const x=-.085+i*.085;mk(new T.CylinderGeometry(.024,.028,.03,24),M.black,x,1.03,.2,gN).rotation.x=Math.PI/2;mk(new T.BoxGeometry(.004,.02,.004),M.steel,x,1.04,.216,gN);
+    mk(new T.CylinderGeometry(.013,.013,.012,18),M.steel,x,.9,.19,gN).rotation.x=Math.PI/2;mk(new T.CylinderGeometry(.013,.013,.012,18),M.steel,x,1.12,.19,gN).rotation.x=Math.PI/2;}
+  const lamp=mk(new T.CylinderGeometry(.014,.014,.02,18),std({color:0xff3030,emissive:0xff2020,emissiveIntensity:0}),.085,1.12,.19,gN);lamp.rotation.x=Math.PI/2;
+  mk(new T.CylinderGeometry(.04,.04,.03,24),M.yellow,-.07,1.365,.05,gN);mk(new T.CylinderGeometry(.034,.028,.04,24),M.red,-.07,1.4,.05,gN);
+  mk(new T.BoxGeometry(.07,.04,.04),M.steel,.05,1.37,.05,gN);
+  mk(new T.BoxGeometry(.28,.4,.006),M.black,0,.45,.183,gN);
+  mk(new T.BoxGeometry(.02,.1,.02),M.steel,.11,.45,.19,gN);
+  function drawDisp(d,label,pv,sv,col){const g=d.g;g.fillStyle='#0a0b0a';g.fillRect(0,0,256,160);g.fillStyle='#1a1d1b';g.fillRect(6,6,244,148);
+    g.font='bold 64px "JetBrains Mono",monospace';g.textAlign='right';g.fillStyle=col;g.shadowColor=col;g.shadowBlur=10;g.fillText(pv,236,78);g.shadowBlur=0;
+    g.font='500 30px "JetBrains Mono",monospace';g.fillStyle='#57d36b';g.fillText(sv,236,132);g.textAlign='left';g.font='600 18px "JetBrains Mono",monospace';g.fillStyle='#9aa0a6';g.fillText(label,16,32);g.fillText('SV',16,130);d.t.needsUpdate=true;}
+
+  const gO=grp('hopper',0.08,0,0.1);
+  mk(new T.CylinderGeometry(.37,.055,.44,64,1,true),M.brassD,0,2.04,0,gO);
+  mk(new T.TorusGeometry(.37,.014,10,64),M.brass,0,2.26,0,gO).rotation.x=Math.PI/2;
+  mk(new T.CylinderGeometry(.055,.055,.22,24),M.brass,0,1.72,0,gO);
+  mk(new T.BoxGeometry(.22,.11,.22),M.brassD,0,1.64,.05,gO);
+  for(let r=0;r<3;r++)for(let c=0;c<5;c++) mk(new T.CylinderGeometry(.008,.008,.005,8),M.black,-.08+c*.04,1.61+r*.03,.162,gO).rotation.x=Math.PI/2;
+  const slide=mk(new T.BoxGeometry(.12,.03,.1),M.brass,0,1.6,.2,gO);
+  const beanMatHop=std({color:0x7a8a55,roughness:.55,metalness:0});
+  const NH=420,hopBeans=new T.InstancedMesh(beanGeo,beanMatHop,NH);hopBeans.count=0;gO.add(hopBeans);
+  {const d=new T.Object3D();for(let i=0;i<NH;i++){const y=1.84+Math.pow(Math.random(),.6)*.3;const rmax=.055+(y-1.82)/.44*.315-.02;const r=Math.sqrt(Math.random())*rmax,a=Math.random()*6.283;d.position.set(Math.cos(a)*r,y,Math.sin(a)*r);d.rotation.set(Math.random()*3,Math.random()*3,0);d.updateMatrix();hopBeans.setMatrixAt(i,d.matrix);}hopBeans.instanceMatrix.needsUpdate=true;}
+  beanMatHop.color.setRGB(...beanRGB(25));
+
+  const sc=document.createElement('canvas');sc.width=sc.height=64;const sgc=sc.getContext('2d');const rg=sgc.createRadialGradient(32,32,0,32,32,32);rg.addColorStop(0,'rgba(220,220,220,.9)');rg.addColorStop(1,'rgba(220,220,220,0)');sgc.fillStyle=rg;sgc.fillRect(0,0,64,64);
+  const NS=70,sPos=new Float32Array(NS*3),sLife=[];for(let i=0;i<NS;i++) sLife.push(Math.random());
+  const sGeo=new T.BufferGeometry();sGeo.setAttribute('position',new T.BufferAttribute(sPos,3));
+  const sMat=new T.PointsMaterial({map:new T.CanvasTexture(sc),size:.28,transparent:true,opacity:0,depthWrite:false,color:0xc9c9c9});
+  scene.add(new T.Points(sGeo,sMat));
+  const smokeOrigin=new T.Vector3(-0.74,2.45,-0.44);
+
+  const ray=new T.Raycaster(),mouse=new T.Vector2();const pickables=Object.values(groups);
+  const sel=new T.BoxHelper(undefined,0xcfa85a);sel.visible=false;scene.add(sel);
+  function pick(e){const r=canvas.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;ray.setFromCamera(mouse,camera);
+    const hit=ray.intersectObjects(pickables,true).find(h=>h.object.visible&&!(h.object.material&&h.object.material.opacity<.3));if(!hit)return null;let o=hit.object;while(o&&!o.userData.id)o=o.parent;return o?o.userData.id:null;}
+  let down=null;
+  canvas.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];});
+  canvas.addEventListener('pointerup',e=>{if(!down)return;const moved=Math.hypot(e.clientX-down[0],e.clientY-down[1]);down=null;if(moved>6)return;const id=pick(e);select(id&&id!==selId?id:null,false);});
+  const tip=$('tip');let lastMove=0;
+  canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const now=performance.now();if(now-lastMove<40)return;lastMove=now;const id=pick(e);canvas.style.cursor=id?'pointer':'grab';
+    if(id){const c=COMPONENTS.find(x=>x.id===id);const r=vp.getBoundingClientRect();tip.hidden=false;tip.textContent=c.th;tip.style.left=(e.clientX-r.left)+'px';tip.style.top=(e.clientY-r.top)+'px';}else tip.hidden=true;});
+  canvas.addEventListener('pointerleave',()=>{tip.hidden=true;});
+  let explode=0,explodeT=0,cut=0,cutT=0;
+  const tRot=$('tRotate'),tCut=$('tCut'),tExp=$('tExplode');
+  tRot.onclick=()=>{controls.autoRotate=!controls.autoRotate;tRot.setAttribute('aria-pressed',controls.autoRotate);};
+  tCut.onclick=()=>{cutT=cutT?0:1;tCut.setAttribute('aria-pressed',!!cutT);};
+  tExp.onclick=()=>{explodeT=explodeT?0:1;tExp.setAttribute('aria-pressed',!!explodeT);};
+  let fly=null;
+  function flyTo(pos,tgt){fly={p0:camera.position.clone(),t0:controls.target.clone(),p1:pos,t1:tgt,s:0};}
+  $('tHome').onclick=()=>{flyTo(HOME.pos.clone(),HOME.tgt.clone());select(null);};
+  function resize(){const w=vp.clientWidth,h=vp.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w<560?44:34;camera.updateProjectionMatrix();}
+  new ResizeObserver(resize).observe(vp);resize();
+
+  const dummy=new T.Object3D();let time=0,lastDisp=0;
+  function frame(dt,S){
+    time+=dt;
+    explode+=(explodeT-explode)*Math.min(1,dt*4);cut+=(cutT-cut)*Math.min(1,dt*5);
+    const ex=explode*explode*(3-2*explode);
+    for(const id in groups) groups[id].position.copy(base[id]).addScaledVector(explodeOff[id],ex);
+    const op=1-cut*0.86;housingMats.forEach(m=>{m.opacity=op;m.depthWrite=op>.6;});
+    const rpm=S.state==='ESTOP'?0:S.rpm;spin.rotation.z-=rpm/60*Math.PI*2*dt*(reduce?.3:1);
+    M.drum.emissiveIntensity=clamp((S.et-140)/160,0,1)*0.55;
+    let nd=0;if(S.charged) nd=Math.floor(Math.min(1,S.chargeAnim)*ND); else if(S.state==='COOLING'&&S.dropAnim<1) nd=Math.floor((1-S.dropAnim)*ND);
+    drumBeans.count=nd;
+    if(nd>0){beanMatDrum.color.setRGB(...beanRGB(S.charged?S.bean:S.dropBean||S.bean));const sp=rpm/58;
+      for(let i=0;i<nd;i++){const b=dB[i];if(!b.c) dummy.position.set(b.x+Math.sin(time*3*sp+b.p)*.012,b.y+Math.cos(time*2.6*sp+b.p)*.01,b.z); else {const s=(time*0.55*sp+b.p)%1;dummy.position.set(lerp(A[0],B[0],s),lerp(A[1],B[1],s)+Math.sin(Math.PI*s)*.07,b.z);}
+        dummy.rotation.set(time*2+b.p,b.p,0);dummy.updateMatrix();drumBeans.setMatrixAt(i,dummy.matrix);}drumBeans.instanceMatrix.needsUpdate=true;}
+    hopBeans.count=(S.state==='READY'||S.state==='PREHEAT')?NH:(S.charged&&S.chargeAnim<1?Math.floor((1-S.chargeAnim)*NH):0);
+    slide.position.z=.2+(S.charged&&S.chargeAnim<1?.1:0);
+    trayBeans.count=(S.state==='COOLING'||S.state==='DONE')?Math.floor(Math.min(1,S.dropAnim)*NT):0;
+    if(S.dropBean!=null) beanMatTray.color.setRGB(...beanRGB(S.dropBean));
+    if((S.state==='COOLING'||S.state==='DONE')){agit.rotation.y+=dt*1.3;trayBeans.rotation.y+=dt*0.35;}
+    const opening=S.state==='COOLING'&&S.dropAnim<1;lever.rotation.z+=((opening?-0.7:0)-lever.rotation.z)*Math.min(1,dt*6);flap.rotation.x+=((opening?0.9:0)-flap.rotation.x)*Math.min(1,dt*6);
+    const g=S.gas/100;flames.forEach((f,i)=>{f.visible=g>0.01;const k=(0.35+g*1.25)*(0.85+Math.random()*0.3)*(i>=8?.5:1);f.scale.set(i>=8?.5:1,k,i>=8?.5:1);f.position.y=.03+.05*k;});
+    fire.intensity=g*2.2*(0.9+Math.random()*0.2);flameMat.opacity=.35+.5*g;vh.rotation.y=-g*1.2;
+    lamp.material.emissiveIntensity=S.state==='ESTOP'?(Math.sin(time*8)>0?2:0):(S.state==='ROASTING'?1.2:0);
+    M.lens.emissiveIntensity=SENS.nir&&S.charged?0.9+Math.sin(time*6)*0.2:0;
+    ringT=Math.min(1,ringT+dt*2.2);ring.scale.setScalar(1+ringT*3);ring.material.opacity=SENS.ac?(1-ringT)*0.9:0;
+    const intensity=S.charged?clamp((S.probe-150)/60,0,1):(S.state==='COOLING'?0.35*(1-S.dropAnim*0.6):0);
+    sMat.opacity+=((intensity*0.5)-sMat.opacity)*Math.min(1,dt*2);
+    const o=smokeOrigin.clone().addScaledVector(explodeOff.cyclone,ex);
+    for(let i=0;i<NS;i++){sLife[i]+=dt*(0.25+S.air/200);if(sLife[i]>1)sLife[i]-=1;const l=sLife[i];sPos[i*3]=o.x+Math.sin(i*1.7+time*.6)*.15*l+l*0.25;sPos[i*3+1]=o.y+l*1.1;sPos[i*3+2]=o.z+Math.cos(i*2.3+time*.5)*.15*l;}
+    sGeo.attributes.position.needsUpdate=true;sMat.size=.18+intensity*.2;
+    if(time-lastDisp>0.25){lastDisp=time;const P=S.plan;drawDisp(d1,'BT',S.state==='OFF'?'----':S.probe.toFixed(1),P.fc.toFixed(0),'#ff5a3c');drawDisp(d2,'ET',S.state==='OFF'?'----':S.et.toFixed(1),P.chargeET.toFixed(0),'#ff5a3c');}
+    if(selId&&groups[selId]){sel.setFromObject(groups[selId]);sel.visible=true;}else sel.visible=false;
+    if(fly){fly.s=Math.min(1,fly.s+dt/0.9);const e=1-Math.pow(1-fly.s,3);camera.position.lerpVectors(fly.p0,fly.p1,e);controls.target.lerpVectors(fly.t0,fly.t1,e);if(fly.s>=1)fly=null;}
+    controls.update();renderer.render(scene,camera);
+  }
+  return {frame,pop(){ringT=0;},
+    focus(id){const g=groups[id];if(!g)return;const box=new T.Box3().setFromObject(g);const c=box.getCenter(new T.Vector3());const sz=box.getSize(new T.Vector3()).length();
+      const d=camera.position.clone().sub(controls.target).normalize();if(d.y<0.15)d.y=0.25;d.normalize();const dist=Math.max(0.9,sz*1.9)*(camera.aspect<0.9?1.4:1);flyTo(c.clone().addScaledVector(d,dist),c);}};
+}
+
+/* ================= BOOT ================= */
+(function boot(){
+  syncInputs(); renderHist(); renderLotVar();
+  S.plan=computePlan(INP); S.state='PREHEAT'; S.et=28;
+  let guard=0; while(S.state==='PREHEAT'&&guard++<20000) step(0.25);
+  S.events=[]; log('info','ไล่ลม 30 วินาที จุดเตา เริ่มอุ่นเครื่อง','→ '+S.plan.chargeET.toFixed(0)+' °C'); log('ok','อุ่นเครื่องเสร็จ พร้อมใส่เมล็ด',Math.round(S.et)+' °C');
+  doCharge(); S.chargeAnim=1;
+  const target=Math.max(300,S.plan.fcTime-55);
+  for(let i=0;i<4*target&&S.fcT==null;i++) step(0.25);
+  popQ.length=0; renderPlan(); updateKPIs(); renderEvents();
+})();
+let last=performance.now();
+function loop(now){
+  const rdt=Math.max(0,Math.min(0.1,(now-last)/1000));last=now;
+  let sim=rdt*S.speed;while(sim>0){const d=Math.min(0.25,sim);step(d);sim-=d;}
+  if(S.charged&&S.chargeAnim<1) S.chargeAnim=Math.min(1,S.chargeAnim+rdt/1.6);
+  if(S.state==='COOLING'&&S.dropAnim<1) S.dropAnim=Math.min(1,S.dropAnim+rdt/2.2);
+  if(now-lastUI>100){lastUI=now;updateUI();}
+  if(chartDirty){chartDirty=false;drawChart();}
+  drawScope();
+  if(three) three.frame(rdt,S);
+  requestAnimationFrame(loop);
+}
+updateUI();drawChart();requestAnimationFrame(loop);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{chartDirty=true;});
+})();
+</script>
+</body>
+</html>
